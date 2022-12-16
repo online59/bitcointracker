@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BitcoinMarketPrice</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bitcoin_in_dollar">Dollar</string>
+    <string name="bitcoin_in_pond">Pond</string>
+    <string name="bitcoin_in_euro">Euro</string>
+    <string name="request_time">Time</string>
+    <string name="usd">USD</string>
+    <string name="gbp">GBP</string>
+    <string name="eur">EUR</string>
+    <string name="convert">Convert To Bitcoin</string>
+    <string name="dash">-</string>
+</resources>
