@@ -41,6 +41,7 @@ public class HistoryPriceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history_price, container, false);
         
         bindView(view);
+        setupRecyclerView();
         loadBitcoinHistoricPrice();
         
         return  view;
@@ -52,15 +53,12 @@ public class HistoryPriceFragment extends Fragment {
         fragment.detach(this).attach(this).commit();
     }
 
-    private void setupRecyclerView(List<BitcoinPrice> data) {
+    private void setupRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
         historicPriceRecyclerView.setLayoutManager(layoutManager);
 
-        historicPriceAdapter = new HistoricPriceAdapter(data, getContext());
-        historicPriceRecyclerView.setAdapter(historicPriceAdapter);
-        historicPriceAdapter.notifyDataSetChanged();
-
+        historicPriceAdapter = new HistoricPriceAdapter();
         historicPriceRecyclerView.setHasFixedSize(true);
 
     }
@@ -69,8 +67,9 @@ public class HistoryPriceFragment extends Fragment {
         MainViewModel viewModel = new ViewModelProvider(this)
                 .get(MainViewModel.class);
         viewModel.getBitcoinHistoricPrice(getContext()).observe(getViewLifecycleOwner(), bitcoinPrices -> {
-            setupRecyclerView(bitcoinPrices);
-            reloadUi();
+            historicPriceAdapter.setListData(bitcoinPrices);
+            historicPriceRecyclerView.setAdapter(historicPriceAdapter);
+            historicPriceAdapter.notifyDataSetChanged();
         });
     }
 

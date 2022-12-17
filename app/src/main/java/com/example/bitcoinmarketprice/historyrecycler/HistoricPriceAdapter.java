@@ -18,13 +18,13 @@ import java.util.List;
 public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdapter.PriceViewHolder> {
 
     private List<BitcoinPrice> listData;
-    private Context context;
 
-    public HistoricPriceAdapter(List<BitcoinPrice> listData, Context context) {
-        this.listData = listData;
-        this.context = context;
+    public HistoricPriceAdapter() {
     }
 
+    public void setListData(List<BitcoinPrice> listData) {
+        this.listData = listData;
+    }
 
     @NonNull
     @Override
