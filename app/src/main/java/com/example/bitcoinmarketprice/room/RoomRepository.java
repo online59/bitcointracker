@@ -27,17 +27,7 @@ public class RoomRepository {
 
         final MutableLiveData<List<BitcoinPrice>> bitcoinMetaMutableLiveData = new MutableLiveData<>();
 
-        final List<BitcoinPrice>[] priceList = new List[]{null};
-        Thread thread = new Thread(() -> priceList[0] = coinDao.getAll());
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        bitcoinMetaMutableLiveData.setValue(priceList[0]);
+        new Thread(() -> bitcoinMetaMutableLiveData.postValue(coinDao.getAll())).start();
 
         return bitcoinMetaMutableLiveData;
     }
