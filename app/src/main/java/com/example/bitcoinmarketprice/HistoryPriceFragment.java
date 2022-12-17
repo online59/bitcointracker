@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.bitcoinmarketprice.historyrecycler.HistoricPriceAdapter;
-import com.example.bitcoinmarketprice.model.BitcoinMeta;
 import com.example.bitcoinmarketprice.room.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
@@ -42,7 +41,7 @@ public class HistoryPriceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history_price, container, false);
         
         bindView(view);
-        setupViewModel();
+        loadBitcoinHistoricPrice();
         
         return  view;
     }
@@ -66,7 +65,7 @@ public class HistoryPriceFragment extends Fragment {
 
     }
 
-    private void setupViewModel() {
+    private void loadBitcoinHistoricPrice() {
         MainViewModel viewModel = new ViewModelProvider(this)
                 .get(MainViewModel.class);
         viewModel.getBitcoinHistoricPrice(getContext()).observe(getViewLifecycleOwner(), bitcoinPrices -> {
@@ -85,6 +84,7 @@ public class HistoryPriceFragment extends Fragment {
         btnClear.setOnClickListener(view1 -> {
             viewModel.deleteAll(getContext());
             historicPriceAdapter.notifyDataSetChanged();
+            reloadUi();
         });
     }
 }

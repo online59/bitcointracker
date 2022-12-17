@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Start requesting bitcoin meta data
-        NetworkConstraint.getInstance(this).fetchDataOnce();
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.fetchDataOnce(this);
     }
 }

@@ -57,9 +57,6 @@ public class SyncDataWorker extends Worker {
 
         } catch (Throwable e) {
             e.printStackTrace();
-            // Technically WorkManager will return Result.failure()
-            // but it's best to be explicit about it.
-            // Thus if there were errors, we're return FAILURE
             Log.e(TAG, "Error fetching data", e);
             return Result.failure();
         }
@@ -112,7 +109,9 @@ public class SyncDataWorker extends Worker {
     }
 
     private void notifyWhenDataReady(BitcoinMeta bitcoinMeta) {
+        // When data is loaded, insert to room database
         insetNewBitcoinPrice(bitcoinMeta);
+        // Recursive, keep calling itself
         NetworkConstraint.getInstance(getApplicationContext()).fetchDataOnce();
     }
 

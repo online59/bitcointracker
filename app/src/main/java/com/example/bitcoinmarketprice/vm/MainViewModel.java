@@ -69,11 +69,21 @@ public class MainViewModel extends ViewModel {
 
     }
 
+    /**
+     * This method delete all data in room database
+     * */
     public void deleteAll (Context context) {
         if (roomRepository == null) {
             roomRepository = new RoomRepository(context);
         }
 
         roomRepository.deleteAll();
+    }
+
+    /**
+     * This method fetching data from server once
+     * */
+    public void fetchDataOnce(Context context) {
+        NetworkConstraint.getInstance(context).fetchDataOnce();
     }
 }
