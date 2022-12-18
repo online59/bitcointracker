@@ -31,8 +31,8 @@ public class MainViewModel extends AndroidViewModel {
     /**
      * This method request bitcoin price meta data from server and return in java's POJO class
      */
-    public MutableLiveData<BitcoinMeta> getBitcoinMetaData() {
-        return retrofitRepository.getBitcoinMetaData();
+    public MutableLiveData<BitcoinMeta> getBitcoinMetaDataFromServer() {
+        return retrofitRepository.getBitcoinMetaDataFromServer();
     }
 
     /**

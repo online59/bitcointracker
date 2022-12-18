@@ -1,23 +1,18 @@
 package com.example.bitcoinmarketprice;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.bitcoinmarketprice.historyrecycler.HistoricPriceAdapter;
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
-import com.example.bitcoinmarketprice.vm.MainViewModel;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import com.example.bitcoinmarketprice.historyrecycler.HistoricPriceAdapter;
+import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 public class HistoryPriceFragment extends Fragment {
 
@@ -32,7 +27,7 @@ public class HistoryPriceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
     }
 
     @Override
@@ -40,12 +35,12 @@ public class HistoryPriceFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history_price, container, false);
-        
+
         bindView(view);
         setupRecyclerView();
         loadBitcoinHistoricPrice();
-        
-        return  view;
+
+        return view;
     }
 
     private void setupRecyclerView() {
@@ -60,10 +55,9 @@ public class HistoryPriceFragment extends Fragment {
 
     private void loadBitcoinHistoricPrice() {
 
-        viewModel.getBitcoinHistoricPrice().observe(getViewLifecycleOwner(), bitcoinPrices -> {
-            historicPriceAdapter.setListData(bitcoinPrices);
+        viewModel.getBitcoinHistoricPrice().observe(getViewLifecycleOwner(), priceList -> {
+            historicPriceAdapter.setListData(priceList);
             historicPriceRecyclerView.setAdapter(historicPriceAdapter);
-            historicPriceAdapter.notifyDataSetChanged();
         });
     }
 
@@ -73,9 +67,6 @@ public class HistoryPriceFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         TextView btnClear = view.findViewById(R.id.btn_clear);
-        btnClear.setOnClickListener(view1 -> {
-            viewModel.deleteAll();
-            historicPriceAdapter.notifyDataSetChanged();
-        });
+        btnClear.setOnClickListener(view1 -> viewModel.deleteAll());
     }
 }

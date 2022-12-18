@@ -1,24 +1,14 @@
 package com.example.bitcoinmarketprice;
 
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Room;
 
-import com.example.bitcoinmarketprice.room.CoinDao;
-import com.example.bitcoinmarketprice.room.CoinDatabase;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
-import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
-    private TextView textResult;
 
     // Set up fragment and bottom navigation bar
     private BottomNavigationView navigationView;
@@ -69,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         // Delete bitcoin data in memory
         viewModel.deleteAll();
 
-        // Fetch new data from server
+        // If data is found, fetch for another new data
         viewModel.fetchDataOnce();
     }
 }

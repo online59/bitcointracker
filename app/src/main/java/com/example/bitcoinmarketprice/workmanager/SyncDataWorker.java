@@ -5,47 +5,32 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.annotation.Nullable;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 import com.example.bitcoinmarketprice.retrofit.GetBitcoinDataApi;
 import com.example.bitcoinmarketprice.retrofit.RetrofitClientInstance;
-import com.example.bitcoinmarketprice.retrofit.RetrofitRepository;
 import com.example.bitcoinmarketprice.room.BitcoinPrice;
 import com.example.bitcoinmarketprice.room.RoomRepository;
-import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SyncDataWorker extends Worker {
-
-    RetrofitRepository retrofitRepository;
-    RoomRepository roomRepository;
-    MainViewModel viewModel;
-
+    private final RoomRepository roomRepository;
     private static final String TAG = SyncDataWorker.class.getSimpleName();
 
     public SyncDataWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
-        retrofitRepository = new RetrofitRepository();
         roomRepository = new RoomRepository((Application) appContext);
-        viewModel = new ViewModelProvider((ViewModelStoreOwner) appContext).get(MainViewModel.class);
     }
 
     @NonNull
     @Override
     public Result doWork() {
-
-        //simulate slow work
-        // WorkerUtils.makeStatusNotification("Fetching Data", applicationContext);
-        Log.i(TAG, "Fetching Data from Remote host");
 
         try {
             //create a call to network
@@ -67,9 +52,6 @@ public class SyncDataWorker extends Worker {
 
         Call<BitcoinMeta> sendRequest = getBitcoinDataApi.getBitcoinMetaData();
 
-        // Store data in mutable live data
-        final MutableLiveData<BitcoinMeta> bitcoinMetaData = new MutableLiveData<>();
-
         // Request data on background thread
         sendRequest.enqueue(new Callback<BitcoinMeta>() {
             @Override
@@ -81,45 +63,36 @@ public class SyncDataWorker extends Worker {
                     return;
                 }
 
-                // If request is successful, store new incoming data in bitcoinMetaData
-                bitcoinMetaData.setValue(response.body());
-                notifyWhenDataReady(bitcoinMetaData.getValue());
+                // If request is successful
+                notifyWhenDataReady(response.body());
             }
 
             @Override
             public void onFailure(@NonNull Call<BitcoinMeta> call, @NonNull Throwable t) {
                 Log.e(TAG, "onFailure: " + t.getMessage());
-                bitcoinMetaData.setValue(null);
-
+                notifyWhenDataReady(null);
             }
         });
     }
 
-    private void insetNewBitcoinPrice(BitcoinMeta meta) {
+    private void notifyWhenDataReady(@Nullable BitcoinMeta bitcoinMeta) {
 
-        BitcoinPrice bitcoinPrice = new BitcoinPrice(meta.getRequestTime().getUpdated(),
-                meta.getBitcoinPrices().getUsd().getRate(),
-                meta.getBitcoinPrices().getGbp().getRate(),
-                meta.getBitcoinPrices().getEur().getRate());
+        if (bitcoinMeta == null) {
+            Log.e(TAG, "SyncDataWorker/notifyWhenDataReady: Bitcoin meta data is null");
+            return;
+        }
 
-        viewModel.getLatestBitcoinPrice().observe((LifecycleOwner) getApplicationContext(), latestItem -> {
-            String latestUpdateTime = latestItem.getRequestTime();
-            String newItemRequestTime = meta.getRequestTime().getUpdated();
+        BitcoinPrice bitcoinPrice = new BitcoinPrice(bitcoinMeta.getRequestTime().getUpdated(),
+                bitcoinMeta.getBitcoinPrices().getUsd().getRate(),
+                bitcoinMeta.getBitcoinPrices().getGbp().getRate(),
+                bitcoinMeta.getBitcoinPrices().getEur().getRate());
 
-            if (!newItemRequestTime.equals(latestUpdateTime)) {
-                roomRepository.insertNewBitcoinPrice(bitcoinPrice);
-            }
-        });
+        // Check condition and insert new bitcoin price if it meet the criteria
+        roomRepository.checkInsertNewBitcoinPrice(bitcoinPrice);
 
-    }
-
-    private void notifyWhenDataReady(BitcoinMeta bitcoinMeta) {
-        // When data is loaded, insert to room database
-        insetNewBitcoinPrice(bitcoinMeta);
         // Recursive, keep calling itself
         NetworkConstraint.getInstance(getApplicationContext()).fetchDataOnce();
     }
-
 
     @Override
     public void onStopped() {

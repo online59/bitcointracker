@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 
-import kotlinx.coroutines.Delay;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,7 +18,7 @@ public class RetrofitRepository {
     public RetrofitRepository() {
     }
 
-    public MutableLiveData<BitcoinMeta> getBitcoinMetaData() {
+    public MutableLiveData<BitcoinMeta> getBitcoinMetaDataFromServer() {
 
         GetBitcoinDataApi getBitcoinDataApi = RetrofitClientInstance
                 .getRetrofitInstance()

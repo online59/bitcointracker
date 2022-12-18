@@ -1,44 +1,25 @@
 package com.example.bitcoinmarketprice;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.bitcoinmarketprice.util.MessageType;
-import com.example.bitcoinmarketprice.model.BitcoinMeta;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.bitcoinmarketprice.room.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
-import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class CurrentPriceFragment extends Fragment {
 
     private TextView tvBitcoinInDollar, tvBitcoinInPond, tvBitcoinInEuro;
-    private String message;
-    private BitcoinMeta bitcoinMeta;
     MainViewModel viewModel;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            message = getArguments().getString(MessageType.MESSAGE);
-        }
     }
 
 
@@ -64,20 +45,20 @@ public class CurrentPriceFragment extends Fragment {
     }
 
     private void setupViewModel() {
-        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), bitcoinPrice -> {
+        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), latestData -> {
 
             // If there is currently no data in database just return
-            if (bitcoinPrice == null) {
-                viewModel.getBitcoinMetaData().observe(getViewLifecycleOwner(), bitcoinMeta -> {
+            if (latestData == null) {
+                viewModel.getBitcoinMetaDataFromServer().observe(getViewLifecycleOwner(), loadedData -> {
 
-                    tvBitcoinInDollar.setText(bitcoinMeta.getBitcoinPrices().getUsd().getRate());
-                    tvBitcoinInPond.setText(bitcoinMeta.getBitcoinPrices().getGbp().getRate());
-                    tvBitcoinInEuro.setText(bitcoinMeta.getBitcoinPrices().getEur().getRate());
+                    tvBitcoinInDollar.setText(loadedData.getBitcoinPrices().getUsd().getRate());
+                    tvBitcoinInPond.setText(loadedData.getBitcoinPrices().getGbp().getRate());
+                    tvBitcoinInEuro.setText(loadedData.getBitcoinPrices().getEur().getRate());
 
-                    BitcoinPrice price = new BitcoinPrice(bitcoinMeta.getRequestTime().getUpdated(),
-                            bitcoinMeta.getBitcoinPrices().getUsd().getRate(),
-                            bitcoinMeta.getBitcoinPrices().getGbp().getRate(),
-                            bitcoinMeta.getBitcoinPrices().getEur().getRate());
+                    BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
+                            loadedData.getBitcoinPrices().getUsd().getRate(),
+                            loadedData.getBitcoinPrices().getGbp().getRate(),
+                            loadedData.getBitcoinPrices().getEur().getRate());
 
                     viewModel.insertNewBitcoinPrice(price);
                 });
@@ -85,9 +66,9 @@ public class CurrentPriceFragment extends Fragment {
             }
 
             // Update ui
-            tvBitcoinInDollar.setText(bitcoinPrice.getUsdRate());
-            tvBitcoinInPond.setText(bitcoinPrice.getGbpRate());
-            tvBitcoinInEuro.setText(bitcoinPrice.getEurRate());
+            tvBitcoinInDollar.setText(latestData.getUsdRate());
+            tvBitcoinInPond.setText(latestData.getGbpRate());
+            tvBitcoinInEuro.setText(latestData.getEurRate());
         });
     }
 }
