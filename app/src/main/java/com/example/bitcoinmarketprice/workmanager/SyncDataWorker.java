@@ -2,12 +2,13 @@ package com.example.bitcoinmarketprice.workmanager;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
-import androidx.room.Room;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -16,12 +17,8 @@ import com.example.bitcoinmarketprice.retrofit.GetBitcoinDataApi;
 import com.example.bitcoinmarketprice.retrofit.RetrofitClientInstance;
 import com.example.bitcoinmarketprice.retrofit.RetrofitRepository;
 import com.example.bitcoinmarketprice.room.BitcoinPrice;
-import com.example.bitcoinmarketprice.room.CoinDao;
-import com.example.bitcoinmarketprice.room.CoinDatabase;
 import com.example.bitcoinmarketprice.room.RoomRepository;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +28,7 @@ public class SyncDataWorker extends Worker {
 
     RetrofitRepository retrofitRepository;
     RoomRepository roomRepository;
+    MainViewModel viewModel;
 
     private static final String TAG = SyncDataWorker.class.getSimpleName();
 
@@ -38,6 +36,7 @@ public class SyncDataWorker extends Worker {
         super(appContext, workerParams);
         retrofitRepository = new RetrofitRepository();
         roomRepository = new RoomRepository((Application) appContext);
+        viewModel = new ViewModelProvider((ViewModelStoreOwner) appContext).get(MainViewModel.class);
     }
 
     @NonNull
@@ -103,7 +102,15 @@ public class SyncDataWorker extends Worker {
                 meta.getBitcoinPrices().getGbp().getRate(),
                 meta.getBitcoinPrices().getEur().getRate());
 
-        roomRepository.insertNewBitcoinPrice(bitcoinPrice);
+        viewModel.getLatestBitcoinPrice().observe((LifecycleOwner) getApplicationContext(), latestItem -> {
+            String latestUpdateTime = latestItem.getRequestTime();
+            String newItemRequestTime = meta.getRequestTime().getUpdated();
+
+            if (!newItemRequestTime.equals(latestUpdateTime)) {
+                roomRepository.insertNewBitcoinPrice(bitcoinPrice);
+            }
+        });
+
     }
 
     private void notifyWhenDataReady(BitcoinMeta bitcoinMeta) {

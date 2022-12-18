@@ -1,15 +1,11 @@
 package com.example.bitcoinmarketprice.vm;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 import com.example.bitcoinmarketprice.retrofit.RetrofitRepository;
@@ -48,28 +44,29 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * This method retrieve latest bitcoin data from table
-     * */
-    public MutableLiveData<BitcoinPrice> getLatestBitcoinPrice() {
+     */
+    public LiveData<BitcoinPrice> getLatestBitcoinPrice() {
         return roomRepository.getLatestItem();
     }
 
     /**
      * This method insert new updated bitcoin price to table
-     * */
-    public void insertNewBitcoinPrice (BitcoinPrice bitcoinPrice) {
+     */
+    public void insertNewBitcoinPrice(BitcoinPrice bitcoinPrice) {
         roomRepository.insertNewBitcoinPrice(bitcoinPrice);
+        System.out.println("Add latest bitcoin price to database successfully");
     }
 
     /**
      * This method delete all data in room database
-     * */
-    public void deleteAll () {
+     */
+    public void deleteAll() {
         roomRepository.deleteAll();
     }
 
     /**
      * This method fetching data from server once
-     * */
+     */
     public void fetchDataOnce() {
         constraint.fetchDataOnce();
     }
