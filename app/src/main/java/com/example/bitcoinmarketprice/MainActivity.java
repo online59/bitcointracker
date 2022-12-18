@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.room.Room;
 
+import com.example.bitcoinmarketprice.room.CoinDao;
+import com.example.bitcoinmarketprice.room.CoinDatabase;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -58,14 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindView() {
         navigationView = findViewById(R.id.bottom_navigation_view);
+
+        // Start requesting bitcoin meta data
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.fetchDataOnce(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        // Start requesting bitcoin meta data
+        // Start delete bitcoin meta data
         MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.fetchDataOnce(this);
+        viewModel.deleteAll(this);
     }
 }

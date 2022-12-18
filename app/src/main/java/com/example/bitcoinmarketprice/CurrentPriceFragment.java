@@ -20,6 +20,11 @@ import com.example.bitcoinmarketprice.room.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class CurrentPriceFragment extends Fragment {
 
     private TextView tvBitcoinInDollar, tvBitcoinInPond, tvBitcoinInEuro;
