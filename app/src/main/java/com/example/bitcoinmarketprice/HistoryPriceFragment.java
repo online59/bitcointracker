@@ -47,12 +47,6 @@ public class HistoryPriceFragment extends Fragment {
         return  view;
     }
 
-    private void reloadUi() {
-        FragmentTransaction fragment = getParentFragmentManager().beginTransaction();
-        fragment.setReorderingAllowed(false);
-        fragment.detach(this).attach(this).commit();
-    }
-
     private void setupRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
@@ -83,7 +77,6 @@ public class HistoryPriceFragment extends Fragment {
         btnClear.setOnClickListener(view1 -> {
             viewModel.deleteAll(getContext());
             historicPriceAdapter.notifyDataSetChanged();
-            reloadUi();
         });
     }
 }

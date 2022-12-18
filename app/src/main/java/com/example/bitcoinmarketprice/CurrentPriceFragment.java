@@ -54,12 +54,6 @@ public class CurrentPriceFragment extends Fragment {
         return view;
     }
 
-    private void reloadUi() {
-        FragmentTransaction fragment = getParentFragmentManager().beginTransaction();
-        fragment.setReorderingAllowed(false);
-        fragment.detach(this).attach(this).commit();
-    }
-
     private void bindView(View view) {
         tvBitcoinInDollar = view.findViewById(R.id.tv_bitcoin_in_dollar);
         tvBitcoinInPond = view.findViewById(R.id.tv_bitcoin_in_pond);
@@ -86,8 +80,6 @@ public class CurrentPriceFragment extends Fragment {
                             bitcoinMeta.getBitcoinPrices().getEur().getRate());
 
                     viewModel.insertNewBitcoinPrice(getContext(), price);
-
-                    reloadUi();
                 });
                 return;
             }
@@ -96,8 +88,6 @@ public class CurrentPriceFragment extends Fragment {
             tvBitcoinInDollar.setText(bitcoinPrice.getUsdRate());
             tvBitcoinInPond.setText(bitcoinPrice.getGbpRate());
             tvBitcoinInEuro.setText(bitcoinPrice.getEurRate());
-
-            reloadUi();
         });
     }
 }
