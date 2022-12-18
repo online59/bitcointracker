@@ -18,7 +18,7 @@ import com.example.bitcoinmarketprice.vm.MainViewModel;
 public class BitcoinConverterFragment extends Fragment {
 
     private TextView tvUsd, tvGbp, tvEur;
-    private EditText edtUsd, edtGbp, edtEur;
+    private EditText edtCurrency;
     private Button btnConvert;
     private BitcoinPrice bitcoinPrice;
 
@@ -64,9 +64,9 @@ public class BitcoinConverterFragment extends Fragment {
         currentGbpRate = Float.parseFloat(bitcoinPrice.getGbpRate().replace(",", ""));
         currentEurRate = Float.parseFloat(bitcoinPrice.getEurRate().replace(",", ""));
 
-        usd = edtUsd.getText().toString().trim();
-        gbp = edtGbp.getText().toString().trim();
-        eur = edtEur.getText().toString().trim();
+        usd = edtCurrency.getText().toString().trim();
+        gbp = edtCurrency.getText().toString().trim();
+        eur = edtCurrency.getText().toString().trim();
 
 
         if (usd.equals("")) {
@@ -100,9 +100,7 @@ public class BitcoinConverterFragment extends Fragment {
         tvGbp = view.findViewById(R.id.tv_gbp);
         tvEur = view.findViewById(R.id.tv_eur);
 
-        edtUsd = view.findViewById(R.id.edt_usd);
-        edtGbp = view.findViewById(R.id.edt_gbp);
-        edtEur = view.findViewById(R.id.edt_eur);
+        edtCurrency = view.findViewById(R.id.edt_bitcoin_to_currency);
 
         btnConvert = view.findViewById(R.id.btn_convert);
     }

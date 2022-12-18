@@ -11,4 +11,8 @@
     <string name="eur">EUR</string>
     <string name="convert">Convert To Bitcoin</string>
     <string name="dash">-</string>
+    <string name="currency_to_bitcoin">Input currency to bitcoin</string>
+    <string name="usd_to_bitcoin">USD to Bitcoin</string>
+    <string name="gbp_to_bitcoin">GBP to Bitcoin</string>
+    <string name="eur_to_bitcoin">EUR to Bitcoin</string>
 </resources>

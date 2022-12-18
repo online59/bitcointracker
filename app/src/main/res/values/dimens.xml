@@ -8,4 +8,6 @@
     <dimen name="stock_price_card_height">112dp</dimen>
     <dimen name="card_stock_price_corner_radius">12dp</dimen>
     <dimen name="large_padding">32dp</dimen>
+    <dimen name="medium_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
 </resources>
