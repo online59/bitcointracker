@@ -16,7 +16,7 @@ import java.util.List;
 public interface CoinDao {
 
     @Query("SELECT * FROM bitcoinprice")
-    List<BitcoinPrice> getAll();
+    LiveData<List<BitcoinPrice>> getAll();
 
     @Query("SELECT * FROM bitcoinprice ORDER BY request_time DESC LIMIT 1")
     BitcoinPrice getLatestItem();

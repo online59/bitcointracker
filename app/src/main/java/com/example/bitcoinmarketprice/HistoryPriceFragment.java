@@ -23,6 +23,7 @@ public class HistoryPriceFragment extends Fragment {
 
     private RecyclerView historicPriceRecyclerView;
     private HistoricPriceAdapter historicPriceAdapter;
+    MainViewModel viewModel;
 
     public HistoryPriceFragment() {
         // Required empty public constructor
@@ -58,9 +59,8 @@ public class HistoryPriceFragment extends Fragment {
     }
 
     private void loadBitcoinHistoricPrice() {
-        MainViewModel viewModel = new ViewModelProvider(this)
-                .get(MainViewModel.class);
-        viewModel.getBitcoinHistoricPrice(getContext()).observe(getViewLifecycleOwner(), bitcoinPrices -> {
+
+        viewModel.getBitcoinHistoricPrice().observe(getViewLifecycleOwner(), bitcoinPrices -> {
             historicPriceAdapter.setListData(bitcoinPrices);
             historicPriceRecyclerView.setAdapter(historicPriceAdapter);
             historicPriceAdapter.notifyDataSetChanged();
@@ -70,12 +70,11 @@ public class HistoryPriceFragment extends Fragment {
     private void bindView(View view) {
         historicPriceRecyclerView = view.findViewById(R.id.history_recycler_view);
 
-        MainViewModel viewModel = new ViewModelProvider(this)
-                .get(MainViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         TextView btnClear = view.findViewById(R.id.btn_clear);
         btnClear.setOnClickListener(view1 -> {
-            viewModel.deleteAll(getContext());
+            viewModel.deleteAll();
             historicPriceAdapter.notifyDataSetChanged();
         });
     }

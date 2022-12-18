@@ -21,6 +21,7 @@ public class BitcoinConverterFragment extends Fragment {
     private EditText edtCurrency;
     private Button btnConvert;
     private BitcoinPrice bitcoinPrice;
+    MainViewModel viewModel;
 
     public BitcoinConverterFragment() {
         // Required empty public constructor
@@ -45,9 +46,7 @@ public class BitcoinConverterFragment extends Fragment {
     }
 
     private void getLatestRate() {
-        MainViewModel viewModel = new ViewModelProvider(this)
-                .get(MainViewModel.class);
-        viewModel.getLatestBitcoinPrice(getContext()).observe(getViewLifecycleOwner(), meta -> {
+        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), meta -> {
             bitcoinPrice = meta;
 
             // Set up click event
@@ -103,5 +102,7 @@ public class BitcoinConverterFragment extends Fragment {
         edtCurrency = view.findViewById(R.id.edt_bitcoin_to_currency);
 
         btnConvert = view.findViewById(R.id.btn_convert);
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
     }
 }

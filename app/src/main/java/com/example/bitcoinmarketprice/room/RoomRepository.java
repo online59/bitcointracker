@@ -1,7 +1,9 @@
 package com.example.bitcoinmarketprice.room;
 
+import android.app.Application;
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Room;
 
@@ -13,21 +15,24 @@ public class RoomRepository {
 
     private static final String TAG = "RoomRepository";
     private final Context context;
+    private CoinDao coinDao;
 
-    public RoomRepository(Context context) {
-        this.context = context;
+    public RoomRepository(Application application) {
+        CoinDatabase coinDatabase = CoinDatabase.getInstance(application);
+        coinDao = coinDatabase.coinDao();
+        this.context = application.getApplicationContext();
     }
 
-    public MutableLiveData<List<BitcoinPrice>> getAllHistoricPrice() {
+    public LiveData<List<BitcoinPrice>> getAllHistoricPrice() {
         CoinDatabase coinDatabase = Room
                 .databaseBuilder(context, CoinDatabase.class, "bitcoin-price")
                 .build();
 
         CoinDao coinDao = coinDatabase.coinDao();
 
-        final MutableLiveData<List<BitcoinPrice>> bitcoinMetaMutableLiveData = new MutableLiveData<>();
+        LiveData<List<BitcoinPrice>> bitcoinMetaMutableLiveData = new MutableLiveData<>();
 
-        new Thread(() -> bitcoinMetaMutableLiveData.postValue(coinDao.getAll())).start();
+        bitcoinMetaMutableLiveData = coinDao.getAll();
 
         return bitcoinMetaMutableLiveData;
     }

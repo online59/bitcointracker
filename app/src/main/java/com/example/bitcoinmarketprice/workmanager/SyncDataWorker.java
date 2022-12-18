@@ -1,5 +1,6 @@
 package com.example.bitcoinmarketprice.workmanager;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
@@ -30,16 +31,13 @@ public class SyncDataWorker extends Worker {
 
     RetrofitRepository retrofitRepository;
     RoomRepository roomRepository;
-    Context context;
 
     private static final String TAG = SyncDataWorker.class.getSimpleName();
 
     public SyncDataWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
-        this.context = appContext;
-
         retrofitRepository = new RetrofitRepository();
-        roomRepository = new RoomRepository(appContext);
+        roomRepository = new RoomRepository((Application) appContext);
     }
 
     @NonNull

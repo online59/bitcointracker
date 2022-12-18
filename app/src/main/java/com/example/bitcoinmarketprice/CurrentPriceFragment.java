@@ -30,6 +30,7 @@ public class CurrentPriceFragment extends Fragment {
     private TextView tvBitcoinInDollar, tvBitcoinInPond, tvBitcoinInEuro;
     private String message;
     private BitcoinMeta bitcoinMeta;
+    MainViewModel viewModel;
 
 
     @Override
@@ -58,17 +59,16 @@ public class CurrentPriceFragment extends Fragment {
         tvBitcoinInDollar = view.findViewById(R.id.tv_bitcoin_in_dollar);
         tvBitcoinInPond = view.findViewById(R.id.tv_bitcoin_in_pond);
         tvBitcoinInEuro = view.findViewById(R.id.tv_bitcoin_in_euro);
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel = new ViewModelProvider(this)
-                .get(MainViewModel.class);
-
-        viewModel.getLatestBitcoinPrice(getContext()).observe(getViewLifecycleOwner(), bitcoinPrice -> {
+        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), bitcoinPrice -> {
 
             // If there is currently no data in database just return
             if (bitcoinPrice == null) {
-                viewModel.getBitcoinMetaData(getContext(), getViewLifecycleOwner()).observe(getViewLifecycleOwner(), bitcoinMeta -> {
+                viewModel.getBitcoinMetaData().observe(getViewLifecycleOwner(), bitcoinMeta -> {
 
                     tvBitcoinInDollar.setText(bitcoinMeta.getBitcoinPrices().getUsd().getRate());
                     tvBitcoinInPond.setText(bitcoinMeta.getBitcoinPrices().getGbp().getRate());
@@ -79,7 +79,7 @@ public class CurrentPriceFragment extends Fragment {
                             bitcoinMeta.getBitcoinPrices().getGbp().getRate(),
                             bitcoinMeta.getBitcoinPrices().getEur().getRate());
 
-                    viewModel.insertNewBitcoinPrice(getContext(), price);
+                    viewModel.insertNewBitcoinPrice(price);
                 });
                 return;
             }

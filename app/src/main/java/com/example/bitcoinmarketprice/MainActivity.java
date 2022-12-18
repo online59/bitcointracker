@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     // Set up fragment and bottom navigation bar
     private BottomNavigationView navigationView;
     private Bundle message;
+    MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +64,12 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.bottom_navigation_view);
 
         // Start requesting bitcoin meta data
-        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.fetchDataOnce(this);
-    }
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        // Delete bitcoin data in memory
+        viewModel.deleteAll();
 
-        // Start delete bitcoin meta data
-        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.deleteAll(this);
+        // Fetch new data from server
+        viewModel.fetchDataOnce();
     }
 }
