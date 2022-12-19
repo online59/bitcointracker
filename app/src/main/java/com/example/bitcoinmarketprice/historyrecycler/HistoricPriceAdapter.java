@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bitcoinmarketprice.R;
@@ -15,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +24,7 @@ import java.util.TimeZone;
 
 public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdapter.PriceViewHolder> {
 
-    private List<BitcoinPrice> listData;
+    private List<BitcoinPrice> listData = new ArrayList<>();
 
     public HistoricPriceAdapter() {
     }
@@ -40,11 +42,13 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     @Override
     public void onBindViewHolder(@NonNull HistoricPriceAdapter.PriceViewHolder holder, int position) {
-        BitcoinPrice item = listData.get(position);
-        holder.requestTime.setText(getItemTime(item.getRequestTime()));
-        holder.priceUsd.setText(item.getUsdRate());
-        holder.priceGbp.setText(item.getGbpRate());
-        holder.priceEur.setText(item.getEurRate());
+        if (listData != null) {
+            BitcoinPrice item = listData.get(position);
+            holder.requestTime.setText(getItemTime(item.getRequestTime()));
+            holder.priceUsd.setText(item.getUsdRate());
+            holder.priceGbp.setText(item.getGbpRate());
+            holder.priceEur.setText(item.getEurRate());
+        }
     }
 
     @Override

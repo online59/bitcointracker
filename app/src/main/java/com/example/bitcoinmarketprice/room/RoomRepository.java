@@ -1,9 +1,12 @@
 package com.example.bitcoinmarketprice.room;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RoomRepository {
 
     private final CoinDao coinDao;
-
+    private static final String TAG = "RoomRepository";
     public RoomRepository(Application application) {
         CoinDatabase coinDatabase = CoinDatabase.getInstance(application);
         coinDao = coinDatabase.coinDao();
@@ -35,9 +38,19 @@ public class RoomRepository {
 
     public void checkInsertNewBitcoinPrice(BitcoinPrice bitcoinPrice) {
 
-        AtomicReference<String> lastTime = new AtomicReference<>();
+        if (bitcoinPrice == null) {
+            Log.e(TAG, "checkInsertNewBitcoinPrice: The data is null, wait for another request within 1 min");
+            return;
+        }
 
-        Thread thread = new Thread(() -> lastTime.set(coinDao.getLatestItem().getRequestTime()));
+        AtomicReference<String> lastTime = new AtomicReference<>();
+        Thread thread = new Thread(() -> {
+            if (coinDao.getLatestItem() == null) {
+                Log.e(TAG, "checkInsertNewBitcoinPrice: CoinDao return a null reference, wait for another request within 1 min");
+                return;
+            }
+            lastTime.set(coinDao.getLatestItem().getRequestTime());
+        });
         thread.start();
         try {
             thread.join();
