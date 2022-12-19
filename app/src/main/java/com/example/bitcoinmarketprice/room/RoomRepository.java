@@ -6,9 +6,8 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
-
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RoomRepository {
@@ -43,10 +42,12 @@ public class RoomRepository {
             return;
         }
 
+        AtomicBoolean isNull = new AtomicBoolean(false);
         AtomicReference<String> lastTime = new AtomicReference<>();
         Thread thread = new Thread(() -> {
             if (coinDao.getLatestItem() == null) {
                 Log.e(TAG, "checkInsertNewBitcoinPrice: CoinDao return a null reference, wait for another request within 1 min");
+                isNull.set(true);
                 return;
             }
             lastTime.set(coinDao.getLatestItem().getRequestTime());
@@ -57,6 +58,11 @@ public class RoomRepository {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        if (isNull.get()) {
+            return;
+        }
+
         String newTime = bitcoinPrice.getRequestTime();
 
         if (!lastTime.toString().equals(newTime)) {
