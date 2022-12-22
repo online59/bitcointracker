@@ -74,4 +74,18 @@ public class RoomRepository {
     public void deleteAll() {
         new Thread(coinDao::deleteAll).start();
     }
+
+    private static class InsertNewDataAsync extends AsyncTask<BitcoinPrice, Void, Void> {
+        
+        private final CoinDao coinDao;
+
+        public InsertNewDataAsync(CoinDao coinDao) {
+            this.coinDao = coinDao;
+        }
+
+        @Override
+        protected void doInBackground(BitcoinPrice... bitcoinPrice) {
+            return null;
+        }
+    }
 }
