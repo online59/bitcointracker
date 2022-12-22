@@ -74,4 +74,8 @@ public class RoomRepository {
     public void deleteAll() {
         new Thread(coinDao::deleteAll).start();
     }
+
+    private static class InsertNewPrice extends AsyncTask<BitcoinPrice, Void, Void>{
+        
+    }
 }
