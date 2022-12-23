@@ -2,6 +2,7 @@ package com.example.bitcoinmarketprice.database;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -34,6 +35,7 @@ public class RoomRepository {
     }
 
     public void insertNewPrice(BitcoinPrice bitcoinPrice) {
+        Log.i(TAG, "insertNewPrice: New data has been added to the database.");
         new InsertItemAsync(coinDao).execute(bitcoinPrice);
     }
 

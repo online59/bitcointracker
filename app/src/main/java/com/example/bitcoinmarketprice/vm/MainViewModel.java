@@ -25,7 +25,7 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
         constraint = NetworkConstraint.getInstance(application);
-        retrofitRepository = RetrofitRepository.getInstance();
+        retrofitRepository = RetrofitRepository.getInstance(application);
         roomRepository = RoomRepository.getInstance(application);
     }
 
@@ -34,21 +34,21 @@ public class MainViewModel extends AndroidViewModel {
      */
     public LiveData<BitcoinMeta> requestBitcoinData(LifecycleOwner lifecycleOwner) {
 
-        final MutableLiveData<BitcoinMeta> bitcoinPriceMutableLiveData = new MutableLiveData<>();
+//        final MutableLiveData<BitcoinMeta> bitcoinPriceMutableLiveData = new MutableLiveData<>();
+//
+//        retrofitRepository.requestBitcoinData().observe(lifecycleOwner, loadedData -> {
+//
+//            BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
+//                    loadedData.getBitcoinPrices().getUsd().getRate(),
+//                    loadedData.getBitcoinPrices().getGbp().getRate(),
+//                    loadedData.getBitcoinPrices().getEur().getRate());
+//
+//            roomRepository.insertNewPrice(price);
+//
+//            bitcoinPriceMutableLiveData.setValue(loadedData);
+//        });
 
-        retrofitRepository.requestBitcoinData().observe(lifecycleOwner, loadedData -> {
-
-            BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
-                    loadedData.getBitcoinPrices().getUsd().getRate(),
-                    loadedData.getBitcoinPrices().getGbp().getRate(),
-                    loadedData.getBitcoinPrices().getEur().getRate());
-
-            roomRepository.insertNewPrice(price);
-
-            bitcoinPriceMutableLiveData.setValue(loadedData);
-        });
-
-        return bitcoinPriceMutableLiveData;
+        return retrofitRepository.requestBitcoinData();
     }
 
     /**

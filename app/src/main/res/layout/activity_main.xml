@@ -20,11 +20,6 @@
                 android:layout_height="184dp"
                 android:orientation="horizontal" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#EEEEEE"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"

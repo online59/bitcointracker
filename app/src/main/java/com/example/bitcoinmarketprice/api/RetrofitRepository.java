@@ -1,11 +1,16 @@
 package com.example.bitcoinmarketprice.api;
 
+import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.database.CoinDao;
+import com.example.bitcoinmarketprice.database.CoinDatabase;
+import com.example.bitcoinmarketprice.database.RoomRepository;
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 
 import retrofit2.Call;
@@ -17,13 +22,14 @@ public class RetrofitRepository {
     private static final String TAG = "RetrofitRepository";
 
     private static RetrofitRepository instance;
-
-    private RetrofitRepository() {
+    private RoomRepository roomRepository;
+    private RetrofitRepository(Application application) {
+        roomRepository = RoomRepository.getInstance(application);
     }
 
-    public static RetrofitRepository getInstance() {
+    public static RetrofitRepository getInstance(Application application) {
         if (instance == null) {
-            instance = new RetrofitRepository();
+            instance = new RetrofitRepository(application);
         }
 
         return instance;
@@ -51,8 +57,18 @@ public class RetrofitRepository {
                     return;
                 }
 
+                BitcoinMeta meta = response.body();
+
                 // If request is successful, store new incoming data in bitcoinMetaData
-                bitcoinMetaData.setValue(response.body());
+                bitcoinMetaData.setValue(meta);
+
+                BitcoinPrice price = new BitcoinPrice(meta.getRequestTime().getUpdated(),
+                        meta.getBitcoinPrices().getUsd().getRate(),
+                        meta.getBitcoinPrices().getGbp().getRate(),
+                        meta.getBitcoinPrices().getEur().getRate());
+
+                // After data is loaded, add it to room database
+                roomRepository.insertNewPrice(price);
             }
 
             @Override
