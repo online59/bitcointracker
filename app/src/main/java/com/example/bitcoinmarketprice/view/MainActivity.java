@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
+import com.example.bitcoinmarketprice.workmanager.BroadcastService;
 import com.example.bitcoinmarketprice.workmanager.RequestService;
 import com.example.bitcoinmarketprice.workmanager.SyncDataWorker;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
     // Set up fragment and bottom navigation bar
     MainViewModel viewModel;
 
-    private static final int UPDATE_INTERVAL = 1000; // 1 minute
+    private static final int UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +46,10 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
 
     private void requestDataPeriodically() {
         // Create intent for intent server
-        Intent intent = new Intent(this, RequestService.class);
+        Intent intent = new Intent(this, BroadcastService.class);
 
         // Create a PendingIntent to trigger the IntentService
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get an instance of AlarmManager
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
