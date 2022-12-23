@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice;
+package com.example.bitcoinmarketprice.view;
 
 import android.os.Bundle;
 
@@ -12,7 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
+import com.example.bitcoinmarketprice.R;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 public class BitcoinConverterFragment extends Fragment {
@@ -46,7 +47,7 @@ public class BitcoinConverterFragment extends Fragment {
     }
 
     private void getLatestRate() {
-        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), meta -> {
+        viewModel.getLatestPrice().observe(getViewLifecycleOwner(), meta -> {
             bitcoinPrice = meta;
 
             // Set up click event

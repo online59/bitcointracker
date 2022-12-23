@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HistoryPriceFragment">
+    tools:context=".view.HistoryPriceFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
             android:id="@+id/history_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/price_item" />
+            tools:listitem="@layout/historic_price_card" />
 
         </androidx.core.widget.NestedScrollView>
 

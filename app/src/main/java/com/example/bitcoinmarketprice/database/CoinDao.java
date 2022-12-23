@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.room;
+package com.example.bitcoinmarketprice.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -14,7 +14,7 @@ public interface CoinDao {
     LiveData<List<BitcoinPrice>> getAll();
 
     @Query("SELECT * FROM bitcoinprice ORDER BY request_time DESC LIMIT 1")
-    BitcoinPrice getLatestItem();
+    LiveData<BitcoinPrice> getLatestItem();
 
     @Insert(entity = BitcoinPrice.class)
     void insertNewPrice(BitcoinPrice bitcoinPrice);

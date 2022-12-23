@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.historyrecycler;
+package com.example.bitcoinmarketprice.view;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,16 +6,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bitcoinmarketprice.R;
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,29 +25,27 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     private List<BitcoinPrice> listData = new ArrayList<>();
 
-    public HistoricPriceAdapter() {
-    }
-
-    public void setListData(List<BitcoinPrice> listData) {
-        this.listData = listData;
+    public HistoricPriceAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        viewModel.getAllPrice().observe(lifecycleOwner, bitcoinPriceList -> {
+            listData = bitcoinPriceList;
+            notifyDataSetChanged();
+        });
     }
 
     @NonNull
     @Override
     public HistoricPriceAdapter.PriceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.price_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.historic_price_card, parent, false);
         return new PriceViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HistoricPriceAdapter.PriceViewHolder holder, int position) {
-        if (listData != null) {
-            BitcoinPrice item = listData.get(position);
-            holder.requestTime.setText(getItemTime(item.getRequestTime()));
-            holder.priceUsd.setText(item.getUsdRate());
-            holder.priceGbp.setText(item.getGbpRate());
-            holder.priceEur.setText(item.getEurRate());
-        }
+        BitcoinPrice item = listData.get(position);
+        holder.getTvRequestTime().setText(getItemTime(item.getRequestTime()));
+        holder.getTvRequestPriceUsd().setText(item.getUsdRate());
+        holder.getTvRequestPriceGbp().setText(item.getGbpRate());
+        holder.getTvRequestPriceEur().setText(item.getEurRate());
     }
 
     @Override
@@ -75,33 +72,32 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     public static class PriceViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView requestTime;
-        private final TextView priceUsd;
-        private final TextView priceGbp;
-        private final TextView priceEur;
+
+        private TextView tvRequestTime, tvRequestPriceUsd, tvRequestPriceGbp, tvRequestPriceEur;
 
         public PriceViewHolder(@NonNull View itemView) {
             super(itemView);
-            requestTime = itemView.findViewById(R.id.price_time);
-            priceUsd = itemView.findViewById(R.id.price_usd);
-            priceGbp = itemView.findViewById(R.id.price_gbp);
-            priceEur = itemView.findViewById(R.id.price_eur);
+
+            tvRequestTime = itemView.findViewById(R.id.tv_update_time);
+            tvRequestPriceUsd = itemView.findViewById(R.id.tv_historic_price_usd);
+            tvRequestPriceGbp = itemView.findViewById(R.id.tv_historic_price_gbp);
+            tvRequestPriceEur = itemView.findViewById(R.id.tv_historic_price_eur);
         }
 
-        public TextView getRequestTime() {
-            return requestTime;
+        public TextView getTvRequestTime() {
+            return tvRequestTime;
         }
 
-        public TextView getPriceUsd() {
-            return priceUsd;
+        public TextView getTvRequestPriceUsd() {
+            return tvRequestPriceUsd;
         }
 
-        public TextView getPriceGbp() {
-            return priceGbp;
+        public TextView getTvRequestPriceGbp() {
+            return tvRequestPriceGbp;
         }
 
-        public TextView getPriceEur() {
-            return priceEur;
+        public TextView getTvRequestPriceEur() {
+            return tvRequestPriceEur;
         }
     }
 }

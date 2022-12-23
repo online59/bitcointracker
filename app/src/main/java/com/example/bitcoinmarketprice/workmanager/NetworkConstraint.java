@@ -11,11 +11,14 @@ import androidx.work.OutOfQuotaPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+
 import java.util.concurrent.TimeUnit;
 
 public class NetworkConstraint {
 
     private final Context context;
+    private SyncDataWorkerCallback callback;
 
     private NetworkConstraint(Context context) {
         this.context = context;
@@ -67,5 +70,9 @@ public class NetworkConstraint {
 
         WorkManager workManager = WorkManager.getInstance(context);
         workManager.enqueue(oneTimeWorkRequest);
+    }
+
+    public interface SyncDataWorkerCallback {
+        BitcoinPrice onNewDataLoaded(BitcoinPrice bitcoinPrice);
     }
 }

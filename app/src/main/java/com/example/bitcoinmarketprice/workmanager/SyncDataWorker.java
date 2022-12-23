@@ -10,10 +10,11 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
-import com.example.bitcoinmarketprice.retrofit.GetBitcoinDataApi;
-import com.example.bitcoinmarketprice.retrofit.RetrofitClientInstance;
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
-import com.example.bitcoinmarketprice.room.RoomRepository;
+import com.example.bitcoinmarketprice.api.GetBitcoinDataApi;
+import com.example.bitcoinmarketprice.api.RetrofitClientInstance;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.database.RoomRepository;
+import com.example.bitcoinmarketprice.view.MainActivity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,11 +22,13 @@ import retrofit2.Response;
 
 public class SyncDataWorker extends Worker {
     private final RoomRepository roomRepository;
+    private final SyncDataWorkerCallback callback;
     private static final String TAG = SyncDataWorker.class.getSimpleName();
 
     public SyncDataWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
-        roomRepository = new RoomRepository((Application) appContext);
+        roomRepository = RoomRepository.getInstance((Application) appContext);
+        callback = (SyncDataWorkerCallback) appContext;
     }
 
     @NonNull
@@ -88,15 +91,14 @@ public class SyncDataWorker extends Worker {
                 bitcoinMeta.getBitcoinPrices().getEur().getRate());
 
         // Check condition and insert new bitcoin price if it meet the criteria
-        roomRepository.checkInsertNewBitcoinPrice(bitcoinPrice);
+//        roomRepository.checkInsertNewBitcoinPrice(bitcoinPrice);
+        callback.onNewDataLoaded(bitcoinPrice);
 
         // Recursive, keep calling itself
         NetworkConstraint.getInstance(getApplicationContext()).fetchDataOnce();
     }
 
-    @Override
-    public void onStopped() {
-        super.onStopped();
-        Log.i(TAG, "OnStopped called for this worker");
+    public interface SyncDataWorkerCallback {
+        void onNewDataLoaded(BitcoinPrice bitcoinPrice);
     }
 }

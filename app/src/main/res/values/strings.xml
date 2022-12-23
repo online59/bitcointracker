@@ -15,4 +15,5 @@
     <string name="usd_to_bitcoin">USD to Bitcoin</string>
     <string name="gbp_to_bitcoin">GBP to Bitcoin</string>
     <string name="eur_to_bitcoin">EUR to Bitcoin</string>
+    <string name="update_time">23 December 2022 10:17 PM</string>
 </resources>

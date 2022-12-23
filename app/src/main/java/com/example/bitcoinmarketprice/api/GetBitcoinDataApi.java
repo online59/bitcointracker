@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.retrofit;
+package com.example.bitcoinmarketprice.api;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 

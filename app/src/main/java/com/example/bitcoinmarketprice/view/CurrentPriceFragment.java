@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice;
+package com.example.bitcoinmarketprice.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,8 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
+import com.example.bitcoinmarketprice.R;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 public class CurrentPriceFragment extends Fragment {
@@ -45,25 +46,25 @@ public class CurrentPriceFragment extends Fragment {
     }
 
     private void setupViewModel() {
-        viewModel.getLatestBitcoinPrice().observe(getViewLifecycleOwner(), latestData -> {
+        viewModel.getLatestPrice().observe(getViewLifecycleOwner(), latestData -> {
 
             // If there is currently no data in database just return
-            if (latestData == null) {
-                viewModel.getBitcoinMetaDataFromServer().observe(getViewLifecycleOwner(), loadedData -> {
-
-                    tvBitcoinInDollar.setText(loadedData.getBitcoinPrices().getUsd().getRate());
-                    tvBitcoinInPond.setText(loadedData.getBitcoinPrices().getGbp().getRate());
-                    tvBitcoinInEuro.setText(loadedData.getBitcoinPrices().getEur().getRate());
-
-                    BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
-                            loadedData.getBitcoinPrices().getUsd().getRate(),
-                            loadedData.getBitcoinPrices().getGbp().getRate(),
-                            loadedData.getBitcoinPrices().getEur().getRate());
-
-                    viewModel.insertNewBitcoinPrice(price);
-                });
-                return;
-            }
+//            if (latestData == null) {
+//                viewModel.requestBitcoinData().observe(getViewLifecycleOwner(), loadedData -> {
+//
+//                    tvBitcoinInDollar.setText(loadedData.getBitcoinPrices().getUsd().getRate());
+//                    tvBitcoinInPond.setText(loadedData.getBitcoinPrices().getGbp().getRate());
+//                    tvBitcoinInEuro.setText(loadedData.getBitcoinPrices().getEur().getRate());
+//
+//                    BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
+//                            loadedData.getBitcoinPrices().getUsd().getRate(),
+//                            loadedData.getBitcoinPrices().getGbp().getRate(),
+//                            loadedData.getBitcoinPrices().getEur().getRate());
+//
+//                    viewModel.insertNewPrice(price);
+//                });
+//                return;
+//            }
 
             // Update ui
             tvBitcoinInDollar.setText(latestData.getUsdRate());

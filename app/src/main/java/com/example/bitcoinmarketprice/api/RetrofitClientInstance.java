@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.retrofit;
+package com.example.bitcoinmarketprice.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

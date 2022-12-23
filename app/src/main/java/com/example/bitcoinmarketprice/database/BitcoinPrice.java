@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.room;
+package com.example.bitcoinmarketprice.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

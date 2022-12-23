@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice;
+package com.example.bitcoinmarketprice.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bitcoinmarketprice.historyrecycler.HistoricPriceAdapter;
+import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 public class HistoryPriceFragment extends Fragment {
@@ -48,15 +48,15 @@ public class HistoryPriceFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
         historicPriceRecyclerView.setLayoutManager(layoutManager);
 
-        historicPriceAdapter = new HistoricPriceAdapter();
+//        historicPriceAdapter = new HistoricPriceAdapter(viewModel);
         historicPriceRecyclerView.setHasFixedSize(true);
 
     }
 
     private void loadBitcoinHistoricPrice() {
 
-        viewModel.getBitcoinHistoricPrice().observe(getViewLifecycleOwner(), priceList -> {
-            historicPriceAdapter.setListData(priceList);
+        viewModel.getAllPrice().observe(getViewLifecycleOwner(), priceList -> {
+//            historicPriceAdapter.setListData(priceList);
             historicPriceRecyclerView.setAdapter(historicPriceAdapter);
         });
     }

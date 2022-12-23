@@ -1,12 +1,10 @@
-package com.example.bitcoinmarketprice.room;
+package com.example.bitcoinmarketprice.database;
 
 import android.content.Context;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-
-import com.example.bitcoinmarketprice.model.BitcoinMeta;
 
 @Database(entities = {BitcoinPrice.class}, version = 1)
 public abstract class CoinDatabase extends RoomDatabase {

@@ -4,13 +4,14 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
-import com.example.bitcoinmarketprice.retrofit.RetrofitRepository;
-import com.example.bitcoinmarketprice.room.BitcoinPrice;
-import com.example.bitcoinmarketprice.room.RoomRepository;
+import com.example.bitcoinmarketprice.api.RetrofitRepository;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.database.RoomRepository;
 import com.example.bitcoinmarketprice.workmanager.NetworkConstraint;
 
 import java.util.List;
@@ -24,36 +25,51 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
         constraint = NetworkConstraint.getInstance(application);
-        retrofitRepository = new RetrofitRepository();
-        roomRepository = new RoomRepository(application);
+        retrofitRepository = RetrofitRepository.getInstance();
+        roomRepository = RoomRepository.getInstance(application);
     }
 
     /**
      * This method request bitcoin price meta data from server and return in java's POJO class
      */
-    public MutableLiveData<BitcoinMeta> getBitcoinMetaDataFromServer() {
-        return retrofitRepository.getBitcoinMetaDataFromServer();
+    public LiveData<BitcoinMeta> requestBitcoinData(LifecycleOwner lifecycleOwner) {
+
+        final MutableLiveData<BitcoinMeta> bitcoinPriceMutableLiveData = new MutableLiveData<>();
+
+        retrofitRepository.requestBitcoinData().observe(lifecycleOwner, loadedData -> {
+
+            BitcoinPrice price = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
+                    loadedData.getBitcoinPrices().getUsd().getRate(),
+                    loadedData.getBitcoinPrices().getGbp().getRate(),
+                    loadedData.getBitcoinPrices().getEur().getRate());
+
+            roomRepository.insertNewPrice(price);
+
+            bitcoinPriceMutableLiveData.setValue(loadedData);
+        });
+
+        return bitcoinPriceMutableLiveData;
     }
 
     /**
      * This method retrieve bitcoin historic price data from BitcoinMeta table and return in java's POJO class
      */
-    public LiveData<List<BitcoinPrice>> getBitcoinHistoricPrice() {
-        return roomRepository.getAllHistoricPrice();
+    public LiveData<List<BitcoinPrice>> getAllPrice() {
+        return roomRepository.getAllPrice();
     }
 
     /**
      * This method retrieve latest bitcoin data from table
      */
-    public LiveData<BitcoinPrice> getLatestBitcoinPrice() {
-        return roomRepository.getLatestItem();
+    public LiveData<BitcoinPrice> getLatestPrice() {
+        return roomRepository.getLatestPrice();
     }
 
     /**
      * This method insert new updated bitcoin price to table
      */
-    public void insertNewBitcoinPrice(BitcoinPrice bitcoinPrice) {
-        roomRepository.insertNewBitcoinPrice(bitcoinPrice);
+    public void insertNewPrice(BitcoinPrice bitcoinPrice) {
+        roomRepository.insertNewPrice(bitcoinPrice);
         System.out.println("Add latest bitcoin price to database successfully");
     }
 

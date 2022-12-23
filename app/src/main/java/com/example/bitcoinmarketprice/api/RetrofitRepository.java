@@ -1,8 +1,9 @@
-package com.example.bitcoinmarketprice.retrofit;
+package com.example.bitcoinmarketprice.api;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
@@ -15,10 +16,20 @@ public class RetrofitRepository {
 
     private static final String TAG = "RetrofitRepository";
 
-    public RetrofitRepository() {
+    private static RetrofitRepository instance;
+
+    private RetrofitRepository() {
     }
 
-    public MutableLiveData<BitcoinMeta> getBitcoinMetaDataFromServer() {
+    public static RetrofitRepository getInstance() {
+        if (instance == null) {
+            instance = new RetrofitRepository();
+        }
+
+        return instance;
+    }
+
+    public LiveData<BitcoinMeta> requestBitcoinData() {
 
         GetBitcoinDataApi getBitcoinDataApi = RetrofitClientInstance
                 .getRetrofitInstance()
