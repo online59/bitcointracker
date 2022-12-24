@@ -20,11 +20,21 @@ import java.util.List;
 public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAdapter.PagerViewHolder> {
 
     private static final int CURRENCY_COUNT = 3;
-    private List<BitcoinPrice> pagerDataList = new ArrayList<>();
+    private List<PagerModel> pagerDataList = new ArrayList<>();
 
     public PriceCardPagerAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
-        viewModel.getAllPrice().observe(lifecycleOwner, lastUpdateData -> {
-            pagerDataList = lastUpdateData;
+        viewModel.getLatestPrice().observe(lifecycleOwner, lastUpdateData -> {
+            String updateTime = lastUpdateData.getRequestTime();
+            String updatePriceUsd = lastUpdateData.getUsdRate();
+            String updatePriceGbp = lastUpdateData.getGbpRate();
+            String updatePriceEur = lastUpdateData.getEurRate();
+
+            String[] listItem = {updatePriceUsd, updatePriceGbp, updatePriceEur};
+
+            for (String s : listItem) {
+                pagerDataList.add(new PagerModel(0, updateTime, s));
+            }
+
             notifyDataSetChanged();
         });
     }
@@ -38,10 +48,10 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
 
     @Override
     public void onBindViewHolder(@NonNull PriceCardPagerAdapter.PagerViewHolder holder, int position) {
-        BitcoinPrice item = pagerDataList.get(position);
+        PagerModel item = pagerDataList.get(position);
         holder.getIvCurrency().setImageResource(R.drawable.bottom_app_icon_menu_1);
-        holder.getTvUpdateTime().setText(item.getRequestTime());
-        holder.getTvUpdatePrice().setText(item.getUsdRate());
+        holder.getTvUpdateTime().setText(item.getTvUpdateTime());
+        holder.getTvUpdatePrice().setText(item.getTvUpdatePrice());
     }
 
     @Override

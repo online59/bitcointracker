@@ -55,6 +55,13 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     /**
+     * This method retrieve latest bitcoin data from table
+     */
+    public LiveData<BitcoinPrice> getLatestPrice() {
+        return roomRepository.getLatestPrice();
+    }
+
+    /**
      * This method insert new updated bitcoin price to table
      */
     public void insertNewPrice(BitcoinPrice bitcoinPrice) {
