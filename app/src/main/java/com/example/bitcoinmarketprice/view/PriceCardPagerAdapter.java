@@ -1,5 +1,8 @@
 package com.example.bitcoinmarketprice.view;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,14 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
 
     public PriceCardPagerAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getLatestPrice().observe(lifecycleOwner, lastUpdateData -> {
+
+            if (lastUpdateData == null) {
+                Log.e(TAG, "PriceCardPagerAdapter: Data is null");
+                return;
+            }
+
+            pagerDataList.clear();
+
             String updateTime = lastUpdateData.getRequestTime();
             String updatePriceUsd = lastUpdateData.getUsdRate();
             String updatePriceGbp = lastUpdateData.getGbpRate();
@@ -48,6 +59,12 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
 
     @Override
     public void onBindViewHolder(@NonNull PriceCardPagerAdapter.PagerViewHolder holder, int position) {
+
+        if (position == RecyclerView.NO_POSITION) {
+            Log.e(TAG, "onBindViewHolder: Recycler view has no_position");
+            return;
+        }
+
         PagerModel item = pagerDataList.get(position);
         holder.getIvCurrency().setImageResource(R.drawable.bottom_app_icon_menu_1);
         holder.getTvUpdateTime().setText(item.getTvUpdateTime());
