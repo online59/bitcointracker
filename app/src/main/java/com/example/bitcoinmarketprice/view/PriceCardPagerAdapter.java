@@ -7,34 +7,41 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bitcoinmarketprice.R;
+import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyPagerAdapter extends RecyclerView.Adapter<MyPagerAdapter.PagerViewHolder>{
+public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAdapter.PagerViewHolder> {
 
-    private List<PagerModel> pagerDataList = new ArrayList<>();
+    private static final int CURRENCY_COUNT = 3;
+    private List<BitcoinPrice> pagerDataList = new ArrayList<>();
 
-    public MyPagerAdapter(List<PagerModel> pagerDataList) {
-        this.pagerDataList = pagerDataList;
+    public PriceCardPagerAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        viewModel.getAllPrice().observe(lifecycleOwner, lastUpdateData -> {
+            pagerDataList = lastUpdateData;
+            notifyDataSetChanged();
+        });
     }
 
     @NonNull
     @Override
-    public MyPagerAdapter.PagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PriceCardPagerAdapter.PagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.latest_price_card, parent, false);
         return new PagerViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyPagerAdapter.PagerViewHolder holder, int position) {
-        PagerModel item = pagerDataList.get(position);
-        holder.getIvCurrency().setImageResource(item.ivCurrency);
-        holder.getTvUpdateTime().setText(item.tvUpdateTime);
-        holder.getTvUpdatePrice().setText(item.tvUpdatePrice);
+    public void onBindViewHolder(@NonNull PriceCardPagerAdapter.PagerViewHolder holder, int position) {
+        BitcoinPrice item = pagerDataList.get(position);
+        holder.getIvCurrency().setImageResource(R.drawable.bottom_app_icon_menu_1);
+        holder.getTvUpdateTime().setText(item.getRequestTime());
+        holder.getTvUpdatePrice().setText(item.getUsdRate());
     }
 
     @Override
@@ -42,7 +49,7 @@ public class MyPagerAdapter extends RecyclerView.Adapter<MyPagerAdapter.PagerVie
         return pagerDataList == null ? 0 : pagerDataList.size();
     }
 
-    public static class PagerViewHolder extends RecyclerView.ViewHolder{
+    public static class PagerViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView ivCurrency;
         private final TextView tvUpdateTime, tvUpdatePrice;
@@ -68,11 +75,8 @@ public class MyPagerAdapter extends RecyclerView.Adapter<MyPagerAdapter.PagerVie
     }
 
     public static class PagerModel {
-        private int ivCurrency;
-        private String tvUpdateTime, tvUpdatePrice;
-
-        public PagerModel() {
-        }
+        private final int ivCurrency;
+        private final String tvUpdateTime, tvUpdatePrice;
 
         public PagerModel(int ivCurrency, String tvUpdateTime, String tvUpdatePrice) {
             this.ivCurrency = ivCurrency;
@@ -84,24 +88,12 @@ public class MyPagerAdapter extends RecyclerView.Adapter<MyPagerAdapter.PagerVie
             return ivCurrency;
         }
 
-        public void setIvCurrency(int ivCurrency) {
-            this.ivCurrency = ivCurrency;
-        }
-
         public String getTvUpdateTime() {
             return tvUpdateTime;
         }
 
-        public void setTvUpdateTime(String tvUpdateTime) {
-            this.tvUpdateTime = tvUpdateTime;
-        }
-
         public String getTvUpdatePrice() {
             return tvUpdatePrice;
-        }
-
-        public void setTvUpdatePrice(String tvUpdatePrice) {
-            this.tvUpdatePrice = tvUpdatePrice;
         }
     }
 }

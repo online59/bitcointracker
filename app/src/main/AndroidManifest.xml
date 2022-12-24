@@ -27,9 +27,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".workmanager.RequestService"
+        <service android:name=".api.RequestService"
             android:enabled="true"/>
-        <receiver android:name=".workmanager.BroadcastService"
+        <receiver android:name=".api.BroadcastService"
             android:enabled="true"/>
     </application>
 

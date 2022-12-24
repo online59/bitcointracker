@@ -19,16 +19,16 @@ import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
 import com.example.bitcoinmarketprice.util.MyUtils;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
-import com.example.bitcoinmarketprice.workmanager.BroadcastService;
-import com.example.bitcoinmarketprice.workmanager.SyncDataWorker;
+import com.example.bitcoinmarketprice.api.BroadcastService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncDataWorker.SyncDataWorkerCallback {
+public class MainActivity extends AppCompatActivity{
 
     // Set up fragment and bottom navigation bar
     MainViewModel viewModel;
+    BitcoinPrice bitcoinPrice;
 
     private static final int UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
@@ -40,16 +40,16 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
         bindView();
         loadData();
         setRecyclerView();
-        requestDataPeriodically();
     }
 
-    private void requestDataPeriodically() {
+    private void requestDataPeriodically(String previousRequestTime) {
+        Log.e(TAG, "requestDataPeriodically: called");
+
         // Create intent for intent server
         Intent intent = new Intent(this, BroadcastService.class);
 
-        if (viewModel.getLatestPrice().getValue() != null) {
-            intent.putExtra(MyUtils.INTENT_LAST_ITEM_IN_DATABASE, viewModel.getLatestPrice().getValue().getRequestTime());
-        }
+        // Put extra information to intent
+        intent.putExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME, previousRequestTime);
 
         // Create a PendingIntent to trigger the IntentService
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -62,7 +62,19 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
     }
 
     private void loadData() {
-        viewModel.requestBitcoinData(this);
+
+        // This method will be called once
+        viewModel.requestBitcoinData(this).observe(this, loadedData -> {
+            Log.e(TAG, "loadData: requestBitcoinData called");
+            bitcoinPrice = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
+                    loadedData.getBitcoinPrices().getUsd().getRate(),
+                    loadedData.getBitcoinPrices().getGbp().getRate(),
+                    loadedData.getBitcoinPrices().getEur().getRate());
+
+            // This method will be called first time when new requested data arrived
+            // and will continue receive call back every time a new data is updated
+            requestDataPeriodically(loadedData.getRequestTime().getUpdated());
+        });
     }
 
     private void setRecyclerView() {
@@ -83,25 +95,7 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
         // Delete bitcoin data in database
         viewModel.deleteAll();
 
-        // If data is found, fetch for another new data
-//        viewModel.fetchDataOnce();
-
-        List<MyPagerAdapter.PagerModel> dataList = createData();
-
         ViewPager2 viewPager2 = findViewById(R.id.view_pager);
-        viewPager2.setAdapter(new MyPagerAdapter(dataList));
-    }
-
-    private List<MyPagerAdapter.PagerModel> createData() {
-        List<MyPagerAdapter.PagerModel> pagerModels = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            pagerModels.add(new MyPagerAdapter.PagerModel(R.drawable.bottom_app_icon_menu_1, "23 December 2022 10:40 PM", "17,580"));
-        }
-        return pagerModels;
-    }
-
-    @Override
-    public void onNewDataLoaded(BitcoinPrice bitcoinPrice) {
-        Log.e(TAG, "onNewDataLoaded: " + bitcoinPrice);
+        viewPager2.setAdapter(new PriceCardPagerAdapter(viewModel, this));
     }
 }

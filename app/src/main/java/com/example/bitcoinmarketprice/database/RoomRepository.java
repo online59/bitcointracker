@@ -30,10 +30,6 @@ public class RoomRepository {
         return coinDao.getAll();
     }
 
-    public LiveData<BitcoinPrice> getLatestPrice() {
-        return coinDao.getLatestItem();
-    }
-
     public void insertNewPrice(BitcoinPrice bitcoinPrice) {
         Log.i(TAG, "insertNewPrice: New data has been added to the database.");
         new InsertItemAsync(coinDao).execute(bitcoinPrice);

@@ -27,7 +27,7 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     public HistoricPriceAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getAllPrice().observe(lifecycleOwner, bitcoinPriceList -> {
-            listData = bitcoinPriceList;
+            listData.addAll(bitcoinPriceList);
             notifyDataSetChanged();
         });
     }

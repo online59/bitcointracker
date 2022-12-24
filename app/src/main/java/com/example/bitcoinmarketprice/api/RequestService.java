@@ -1,4 +1,4 @@
-package com.example.bitcoinmarketprice.workmanager;
+package com.example.bitcoinmarketprice.api;
 
 import static android.content.ContentValues.TAG;
 
@@ -10,10 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.example.bitcoinmarketprice.api.RetrofitRepository;
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
-import com.example.bitcoinmarketprice.database.RoomRepository;
 import com.example.bitcoinmarketprice.util.MyUtils;
-
-import java.io.Serializable;
 
 public class RequestService extends IntentService {
 
@@ -26,15 +23,13 @@ public class RequestService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        BitcoinPrice bitcoinPrice = (BitcoinPrice) intent.getSerializableExtra(MyUtils.INTENT_LAST_ITEM_IN_DATABASE);
 
-        if (bitcoinPrice != null) {
-            String previousRequestTime = bitcoinPrice.getRequestTime();
-            retrofitRepository.requestBitcoinData(previousRequestTime);
-        } else {
-            retrofitRepository.requestBitcoinData("");
+        if (intent == null) {
+            return;
         }
 
+        String previousRequestTime = intent.getStringExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME);
+        retrofitRepository.requestBitcoinData(previousRequestTime);
         Log.e(TAG, "onHandleIntent: Call");
     }
 }
