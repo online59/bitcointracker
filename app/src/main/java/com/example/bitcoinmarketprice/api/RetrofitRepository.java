@@ -35,7 +35,7 @@ public class RetrofitRepository {
         return instance;
     }
 
-    public LiveData<BitcoinMeta> requestBitcoinData() {
+    public LiveData<BitcoinMeta> requestBitcoinData(String previousRequestTime) {
 
         GetBitcoinDataApi getBitcoinDataApi = RetrofitClientInstance
                 .getRetrofitInstance()
@@ -67,8 +67,12 @@ public class RetrofitRepository {
                         meta.getBitcoinPrices().getGbp().getRate(),
                         meta.getBitcoinPrices().getEur().getRate());
 
-                // After data is loaded, add it to room database
-                roomRepository.insertNewPrice(price);
+                // Check whether this data is already added to the database
+                if (!previousRequestTime.equalsIgnoreCase(meta.getRequestTime().getUpdated())) {
+                    // After data is loaded, add it to room database
+                    roomRepository.insertNewPrice(price);
+                }
+
             }
 
             @Override

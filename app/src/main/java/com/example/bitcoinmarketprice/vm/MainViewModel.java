@@ -48,7 +48,7 @@ public class MainViewModel extends AndroidViewModel {
 //            bitcoinPriceMutableLiveData.setValue(loadedData);
 //        });
 
-        return retrofitRepository.requestBitcoinData();
+        return retrofitRepository.requestBitcoinData("");
     }
 
     /**

@@ -6,7 +6,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -18,9 +17,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.util.MyUtils;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 import com.example.bitcoinmarketprice.workmanager.BroadcastService;
-import com.example.bitcoinmarketprice.workmanager.RequestService;
 import com.example.bitcoinmarketprice.workmanager.SyncDataWorker;
 
 import java.util.ArrayList;
@@ -47,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
     private void requestDataPeriodically() {
         // Create intent for intent server
         Intent intent = new Intent(this, BroadcastService.class);
+
+        if (viewModel.getLatestPrice().getValue() != null) {
+            intent.putExtra(MyUtils.INTENT_LAST_ITEM_IN_DATABASE, viewModel.getLatestPrice().getValue().getRequestTime());
+        }
 
         // Create a PendingIntent to trigger the IntentService
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -99,6 +102,6 @@ public class MainActivity extends AppCompatActivity implements SyncDataWorker.Sy
 
     @Override
     public void onNewDataLoaded(BitcoinPrice bitcoinPrice) {
-        Log.e(TAG, "onNewDataLoaded: " + bitcoinPrice );
+        Log.e(TAG, "onNewDataLoaded: " + bitcoinPrice);
     }
 }

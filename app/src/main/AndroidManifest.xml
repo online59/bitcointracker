@@ -26,6 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".workmanager.RequestService"
+            android:enabled="true"/>
+        <receiver android:name=".workmanager.BroadcastService"
+            android:enabled="true"/>
     </application>
 
 </manifest>
