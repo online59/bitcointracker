@@ -8,23 +8,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.bitcoinmarketprice.R;
-import com.example.bitcoinmarketprice.database.BitcoinPrice;
-import com.example.bitcoinmarketprice.util.MyUtils;
-import com.example.bitcoinmarketprice.vm.MainViewModel;
 import com.example.bitcoinmarketprice.api.BroadcastService;
+import com.example.bitcoinmarketprice.vm.MainViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     // Set up fragment and bottom navigation bar
     MainViewModel viewModel;
@@ -36,9 +37,30 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup app bar
+        Toolbar toolbar = findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
         bindView();
         requestDataPeriodically();
         setRecyclerView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.app_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int menuItemId = item.getItemId();
+        if (menuItemId == R.id.menu_calculator) {
+            Intent intent = new Intent(this, Calculator.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestDataPeriodically() {
@@ -76,6 +98,9 @@ public class MainActivity extends AppCompatActivity{
 
         // Delete bitcoin data in database
         viewModel.deleteAll();
+
+        // Load new data
+        viewModel.requestBitcoinData();
 
         ViewPager2 viewPager2 = findViewById(R.id.view_pager);
         viewPager2.setAdapter(new PriceCardPagerAdapter(viewModel, this));

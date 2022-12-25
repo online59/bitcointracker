@@ -14,7 +14,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bitcoinmarketprice.R;
-import com.example.bitcoinmarketprice.database.BitcoinPrice;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import java.util.ArrayList;
@@ -37,9 +36,10 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
                 String updatePriceEur = lastUpdateData.getEurRate();
 
                 String[] listItem = {updatePriceUsd, updatePriceGbp, updatePriceEur};
+                int[] currencySymbol = {R.drawable.currency_symbol_usd, R.drawable.currency_symbol_gbp, R.drawable.currency_symbol_eur};
 
-                for (String s : listItem) {
-                    pagerDataList.add(new PagerModel(0, updateTime, s));
+                for (int i = 0; i < CURRENCY_COUNT; i++) {
+                    pagerDataList.add(new PagerModel(currencySymbol[i], updateTime, listItem[i]));
                 }
 
                 notifyDataSetChanged();
@@ -57,15 +57,12 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
     @Override
     public void onBindViewHolder(@NonNull PriceCardPagerAdapter.PagerViewHolder holder, int position) {
 
-        if (position == RecyclerView.NO_POSITION) {
-            Log.e(TAG, "onBindViewHolder: Recycler view has no_position");
-            return;
+        if (position != RecyclerView.NO_POSITION) {
+            PagerModel item = pagerDataList.get(position);
+            holder.getIvCurrency().setImageResource(item.getIvCurrency());
+            holder.getTvUpdateTime().setText(item.getTvUpdateTime());
+            holder.getTvUpdatePrice().setText(item.getTvUpdatePrice());
         }
-
-        PagerModel item = pagerDataList.get(position);
-        holder.getIvCurrency().setImageResource(R.drawable.bottom_app_icon_menu_1);
-        holder.getTvUpdateTime().setText(item.getTvUpdateTime());
-        holder.getTvUpdatePrice().setText(item.getTvUpdatePrice());
     }
 
     @Override

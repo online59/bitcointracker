@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,10 +15,14 @@
         android:theme="@style/Theme.BitcoinMarketPrice"
         tools:targetApi="31">
         <activity
+            android:name=".view.Calculator"
+            android:exported="true"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+        <activity
             android:name=".view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,10 +30,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".api.RequestService"
-            android:enabled="true"/>
-        <receiver android:name=".api.BroadcastService"
-            android:enabled="true"/>
+        <service
+            android:name=".api.RequestService"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".api.BroadcastService"
+            android:enabled="true" />
     </application>
 
 </manifest>
