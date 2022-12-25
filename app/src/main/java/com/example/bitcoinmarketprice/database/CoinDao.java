@@ -3,6 +3,7 @@ package com.example.bitcoinmarketprice.database;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -16,10 +17,7 @@ public interface CoinDao {
     @Query("SELECT * FROM bitcoinprice ORDER BY request_time DESC LIMIT 1")
     LiveData<BitcoinPrice> getLatestItem();
 
-    @Query("SELECT * FROM bitcoinprice WHERE request_time == :requestTime")
-    LiveData<BitcoinPrice> getDataByDate(String requestTime);
-
-    @Insert(entity = BitcoinPrice.class)
+    @Insert(entity = BitcoinPrice.class, onConflict = OnConflictStrategy.IGNORE)
     void insertNewPrice(BitcoinPrice bitcoinPrice);
 
     @Query("DELETE FROM bitcoinprice")

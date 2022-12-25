@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity{
 
     // Set up fragment and bottom navigation bar
     MainViewModel viewModel;
-    BitcoinPrice bitcoinPrice;
 
     private static final int UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
@@ -38,11 +37,11 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         bindView();
-        loadData();
+        requestDataPeriodically();
         setRecyclerView();
     }
 
-    private void requestDataPeriodically(String previousRequestTime) {
+    private void requestDataPeriodically() {
         Log.e(TAG, "requestDataPeriodically: called");
 
         // Create intent for intent server
@@ -63,14 +62,8 @@ public class MainActivity extends AppCompatActivity{
         // This method will be called once
         viewModel.requestBitcoinData().observe(this, loadedData -> {
             Log.e(TAG, "loadData: requestBitcoinData called");
-            bitcoinPrice = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
-                    loadedData.getBitcoinPrices().getUsd().getRate(),
-                    loadedData.getBitcoinPrices().getGbp().getRate(),
-                    loadedData.getBitcoinPrices().getEur().getRate());
-
             // This method will be called first time when new requested data arrived
             // and will continue receive call back every time a new data is updated
-            requestDataPeriodically(loadedData.getRequestTime().getUpdated());
         });
     }
 

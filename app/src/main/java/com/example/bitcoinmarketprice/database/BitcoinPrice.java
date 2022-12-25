@@ -1,5 +1,6 @@
 package com.example.bitcoinmarketprice.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -9,17 +10,15 @@ import java.io.Serializable;
 @Entity
 public class BitcoinPrice implements Serializable {
 
-    public BitcoinPrice(String requestTime, String usdRate, String gbpRate, String eurRate) {
-        this.requestTime = requestTime;
-        this.usdRate = usdRate;
-        this.gbpRate = gbpRate;
-        this.eurRate = eurRate;
+    public BitcoinPrice() {
     }
 
-    @PrimaryKey(autoGenerate = true)
+    //    @PrimaryKey(autoGenerate = true)
     private int uid;
 
+    @PrimaryKey
     @ColumnInfo(name = "request_time")
+    @NonNull
     private String requestTime;
 
     @ColumnInfo(name = "usd_rate")

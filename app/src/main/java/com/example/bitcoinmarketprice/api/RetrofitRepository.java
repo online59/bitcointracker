@@ -56,24 +56,18 @@ public class RetrofitRepository {
                     return;
                 }
 
-                BitcoinMeta meta = response.body();
+                BitcoinMeta bitcoinMeta = response.body();
 
                 // If request is successful, store new incoming data in bitcoinMetaData
-                bitcoinMetaData.setValue(meta);
+                bitcoinMetaData.setValue(bitcoinMeta);
 
-                BitcoinPrice price = new BitcoinPrice(meta.getRequestTime().getUpdated(),
-                        meta.getBitcoinPrices().getUsd().getRate(),
-                        meta.getBitcoinPrices().getGbp().getRate(),
-                        meta.getBitcoinPrices().getEur().getRate());
+                BitcoinPrice bitcoinPrice = new BitcoinPrice();
+                bitcoinPrice.setRequestTime(bitcoinMeta.getRequestTime().getUpdated());
+                bitcoinPrice.setUsdRate(bitcoinMeta.getBitcoinPrices().getUsd().getRate());
+                bitcoinPrice.setGbpRate(bitcoinMeta.getBitcoinPrices().getGbp().getRate());
+                bitcoinPrice.setEurRate(bitcoinMeta.getBitcoinPrices().getEur().getRate());
 
-                // Check whether this data is already added to the database
-                Log.e(TAG, "onResponse: Previous Data: " + roomRepository.getDataByDate(meta.getRequestTime().getUpdated()).getValue());
-                Log.e(TAG, "onResponse: New Data: " + meta.getRequestTime().getUpdated());
-
-                if (roomRepository.getDataByDate(meta.getRequestTime().getUpdated()).getValue() == null) {
-                    // After data is loaded, add it to room database
-                    roomRepository.insertNewPrice(price);
-                }
+                roomRepository.insertNewPrice(bitcoinPrice);
 
             }
 

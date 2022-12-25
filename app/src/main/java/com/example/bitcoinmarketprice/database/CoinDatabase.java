@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {BitcoinPrice.class}, version = 1)
+@Database(entities = {BitcoinPrice.class}, version = 2)
 public abstract class CoinDatabase extends RoomDatabase {
     public abstract CoinDao coinDao();
 
@@ -19,6 +19,7 @@ public abstract class CoinDatabase extends RoomDatabase {
         if (instance == null) {
             instance = Room
                     .databaseBuilder(context.getApplicationContext(), CoinDatabase.class, "bitcoin-price")
+                    .fallbackToDestructiveMigration()
                     .build();
         }
 

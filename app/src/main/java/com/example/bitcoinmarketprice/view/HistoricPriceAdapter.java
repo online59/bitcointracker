@@ -36,8 +36,15 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
                 return;
             }
 
+            listData.clear();
             listData.addAll(bitcoinPriceList);
             notifyDataSetChanged();
+
+            new Thread(() -> {
+                for (BitcoinPrice bitcoinPrice: listData) {
+                    Log.e(TAG, "HistoricPriceAdapter: " + bitcoinPrice.getRequestTime());
+                }
+            }).start();
         });
     }
 
