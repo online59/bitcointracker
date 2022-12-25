@@ -8,8 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
-import com.example.bitcoinmarketprice.database.CoinDao;
-import com.example.bitcoinmarketprice.database.CoinDatabase;
 import com.example.bitcoinmarketprice.database.RoomRepository;
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 
@@ -23,6 +21,7 @@ public class RetrofitRepository {
 
     private static RetrofitRepository instance;
     private RoomRepository roomRepository;
+
     private RetrofitRepository(Application application) {
         roomRepository = RoomRepository.getInstance(application);
     }
@@ -35,7 +34,7 @@ public class RetrofitRepository {
         return instance;
     }
 
-    public LiveData<BitcoinMeta> requestBitcoinData(String previousRequestTime) {
+    public LiveData<BitcoinMeta> requestBitcoinData() {
 
         GetBitcoinDataApi getBitcoinDataApi = RetrofitClientInstance
                 .getRetrofitInstance()
@@ -68,7 +67,10 @@ public class RetrofitRepository {
                         meta.getBitcoinPrices().getEur().getRate());
 
                 // Check whether this data is already added to the database
-                if (!previousRequestTime.equalsIgnoreCase(meta.getRequestTime().getUpdated())) {
+                Log.e(TAG, "onResponse: Previous Data: " + roomRepository.getDataByDate(meta.getRequestTime().getUpdated()).getValue());
+                Log.e(TAG, "onResponse: New Data: " + meta.getRequestTime().getUpdated());
+
+                if (roomRepository.getDataByDate(meta.getRequestTime().getUpdated()).getValue() == null) {
                     // After data is loaded, add it to room database
                     roomRepository.insertNewPrice(price);
                 }

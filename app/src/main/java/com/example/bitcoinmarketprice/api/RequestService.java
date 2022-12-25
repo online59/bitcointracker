@@ -28,8 +28,7 @@ public class RequestService extends IntentService {
             return;
         }
 
-        String previousRequestTime = intent.getStringExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME);
-        retrofitRepository.requestBitcoinData(previousRequestTime);
+        retrofitRepository.requestBitcoinData();
         Log.e(TAG, "onHandleIntent: Call");
     }
 }

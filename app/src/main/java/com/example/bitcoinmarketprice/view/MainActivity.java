@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity{
         // Create intent for intent server
         Intent intent = new Intent(this, BroadcastService.class);
 
-        // Put extra information to intent
-        intent.putExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME, previousRequestTime);
-
         // Create a PendingIntent to trigger the IntentService
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity{
     private void loadData() {
 
         // This method will be called once
-        viewModel.requestBitcoinData(this).observe(this, loadedData -> {
+        viewModel.requestBitcoinData().observe(this, loadedData -> {
             Log.e(TAG, "loadData: requestBitcoinData called");
             bitcoinPrice = new BitcoinPrice(loadedData.getRequestTime().getUpdated(),
                     loadedData.getBitcoinPrices().getUsd().getRate(),

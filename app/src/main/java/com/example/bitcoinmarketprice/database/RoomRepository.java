@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -34,6 +35,14 @@ public class RoomRepository {
         return coinDao.getLatestItem();
     }
 
+    public LiveData<BitcoinPrice> getDataByDate(String requestTime) {
+
+        final MutableLiveData<BitcoinPrice> priceByDate = new MutableLiveData<>();
+        new LoadDataByDateAsync(coinDao, priceByDate::setValue).execute(requestTime);
+
+        return coinDao.getDataByDate(requestTime);
+    }
+
     public void insertNewPrice(BitcoinPrice bitcoinPrice) {
         Log.i(TAG, "insertNewPrice: New data has been added to the database.");
         new InsertItemAsync(coinDao).execute(bitcoinPrice);
@@ -45,6 +54,34 @@ public class RoomRepository {
 
     public void deleteAll() {
         new DeleteItemAsync(coinDao).execute();
+    }
+
+
+    private static class LoadDataByDateAsync extends AsyncTask<String, Void, BitcoinPrice> {
+
+        private final CoinDao coinDao;
+        private final AsyncTaskListener listener;
+
+        public interface AsyncTaskListener {
+            void onAsyncTaskComplete(BitcoinPrice bitcoinPrice);
+        }
+
+        public LoadDataByDateAsync(CoinDao coinDao, AsyncTaskListener listener) {
+            this.coinDao = coinDao;
+            this.listener = listener;
+        }
+
+        @Override
+        protected BitcoinPrice doInBackground(String... strings) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(BitcoinPrice bitcoinPrice) {
+            super.onPostExecute(bitcoinPrice);
+            listener.onAsyncTaskComplete(bitcoinPrice);
+        }
     }
 
     private static class InsertCheckItemAsync extends AsyncTask<BitcoinPrice, Void, Void> {

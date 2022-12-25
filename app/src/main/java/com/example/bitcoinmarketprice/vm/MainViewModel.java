@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.bitcoinmarketprice.model.BitcoinMeta;
 import com.example.bitcoinmarketprice.api.RetrofitRepository;
@@ -28,7 +29,7 @@ public class MainViewModel extends AndroidViewModel {
     /**
      * This method request bitcoin price meta data from server and return in java's POJO class
      */
-    public LiveData<BitcoinMeta> requestBitcoinData(LifecycleOwner lifecycleOwner) {
+    public LiveData<BitcoinMeta> requestBitcoinData() {
 
 //        final MutableLiveData<BitcoinMeta> bitcoinPriceMutableLiveData = new MutableLiveData<>();
 //
@@ -44,7 +45,7 @@ public class MainViewModel extends AndroidViewModel {
 //            bitcoinPriceMutableLiveData.setValue(loadedData);
 //        });
 
-        return retrofitRepository.requestBitcoinData("");
+        return retrofitRepository.requestBitcoinData();
     }
 
     /**

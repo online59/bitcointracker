@@ -1,5 +1,8 @@
 package com.example.bitcoinmarketprice.view;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,12 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     public HistoricPriceAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getAllPrice().observe(lifecycleOwner, bitcoinPriceList -> {
+
+            if (bitcoinPriceList == null) {
+                Log.e(TAG, "HistoricPriceAdapter: Data is null");
+                return;
+            }
+
             listData.addAll(bitcoinPriceList);
             notifyDataSetChanged();
         });

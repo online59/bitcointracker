@@ -11,8 +11,6 @@ public class BroadcastService extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // Start a service or perform some other action when the broadcast is received
         Intent serviceIntent = new Intent(context, RequestService.class);
-        String bitcoinPrice = intent.getStringExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME);
-        serviceIntent.putExtra(MyUtils.INTENT_PREVIOUS_REQUEST_TIME, bitcoinPrice);
         context.startService(serviceIntent);
     }
 }
