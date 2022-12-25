@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.database.BitcoinPrice;
+import com.example.bitcoinmarketprice.util.MyUtils;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
 
 import java.text.ParseException;
@@ -31,20 +32,11 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
     public HistoricPriceAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getAllPrice().observe(lifecycleOwner, bitcoinPriceList -> {
 
-            if (bitcoinPriceList == null) {
-                Log.e(TAG, "HistoricPriceAdapter: Data is null");
-                return;
+            if (bitcoinPriceList != null) {
+                listData.clear();
+                listData.addAll(bitcoinPriceList);
+                notifyDataSetChanged();
             }
-
-            listData.clear();
-            listData.addAll(bitcoinPriceList);
-            notifyDataSetChanged();
-
-            new Thread(() -> {
-                for (BitcoinPrice bitcoinPrice: listData) {
-                    Log.e(TAG, "HistoricPriceAdapter: " + bitcoinPrice.getRequestTime());
-                }
-            }).start();
         });
     }
 
@@ -57,32 +49,18 @@ public class HistoricPriceAdapter extends RecyclerView.Adapter<HistoricPriceAdap
 
     @Override
     public void onBindViewHolder(@NonNull HistoricPriceAdapter.PriceViewHolder holder, int position) {
-        BitcoinPrice item = listData.get(position);
-        holder.getTvRequestTime().setText(getItemTime(item.getRequestTime()));
-        holder.getTvRequestPriceUsd().setText(item.getUsdRate());
-        holder.getTvRequestPriceGbp().setText(item.getGbpRate());
-        holder.getTvRequestPriceEur().setText(item.getEurRate());
+        if (position != RecyclerView.NO_POSITION) {
+            BitcoinPrice item = listData.get(position);
+            holder.getTvRequestTime().setText(MyUtils.getItemTime(item.getRequestTime()));
+            holder.getTvRequestPriceUsd().setText(MyUtils.getWholePrice(item.getUsdRate()));
+            holder.getTvRequestPriceGbp().setText(MyUtils.getWholePrice(item.getGbpRate()));
+            holder.getTvRequestPriceEur().setText(MyUtils.getWholePrice(item.getEurRate()));
+        }
     }
 
     @Override
     public int getItemCount() {
         return listData.size();
-    }
-
-    private String getItemTime(String itemDate) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss 'UTC'", Locale.US);
-        Date date;
-        try {
-            date = inputFormat.parse(itemDate);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy KK:mm a", Locale.US);
-        outputFormat.setTimeZone(TimeZone.getTimeZone("Thailand/Bangkok"));
-        // Convert to Thailand time zone
-        final long millisToAdd = 50_400_000;
-        date.setTime(date.getTime() + millisToAdd);
-        return outputFormat.format(date);
     }
 
 

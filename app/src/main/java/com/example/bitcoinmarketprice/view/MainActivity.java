@@ -57,16 +57,6 @@ public class MainActivity extends AppCompatActivity{
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), UPDATE_INTERVAL, pendingIntent);
     }
 
-    private void loadData() {
-
-        // This method will be called once
-        viewModel.requestBitcoinData().observe(this, loadedData -> {
-            Log.e(TAG, "loadData: requestBitcoinData called");
-            // This method will be called first time when new requested data arrived
-            // and will continue receive call back every time a new data is updated
-        });
-    }
-
     private void setRecyclerView() {
 
         RecyclerView recyclerView = findViewById(R.id.my_recycler_view);

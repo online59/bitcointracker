@@ -29,6 +29,5 @@ public class RequestService extends IntentService {
         }
 
         retrofitRepository.requestBitcoinData();
-        Log.e(TAG, "onHandleIntent: Call");
     }
 }

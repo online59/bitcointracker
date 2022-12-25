@@ -28,25 +28,22 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
     public PriceCardPagerAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getLatestPrice().observe(lifecycleOwner, lastUpdateData -> {
 
-            if (lastUpdateData == null) {
-                Log.e(TAG, "PriceCardPagerAdapter: Data is null");
-                return;
+            if (lastUpdateData != null) {
+                pagerDataList.clear();
+
+                String updateTime = lastUpdateData.getRequestTime();
+                String updatePriceUsd = lastUpdateData.getUsdRate();
+                String updatePriceGbp = lastUpdateData.getGbpRate();
+                String updatePriceEur = lastUpdateData.getEurRate();
+
+                String[] listItem = {updatePriceUsd, updatePriceGbp, updatePriceEur};
+
+                for (String s : listItem) {
+                    pagerDataList.add(new PagerModel(0, updateTime, s));
+                }
+
+                notifyDataSetChanged();
             }
-
-            pagerDataList.clear();
-
-            String updateTime = lastUpdateData.getRequestTime();
-            String updatePriceUsd = lastUpdateData.getUsdRate();
-            String updatePriceGbp = lastUpdateData.getGbpRate();
-            String updatePriceEur = lastUpdateData.getEurRate();
-
-            String[] listItem = {updatePriceUsd, updatePriceGbp, updatePriceEur};
-
-            for (String s : listItem) {
-                pagerDataList.add(new PagerModel(0, updateTime, s));
-            }
-
-            notifyDataSetChanged();
         });
     }
 
