@@ -62,9 +62,11 @@ public class MainActivity extends AppCompatActivity{
         RecyclerView recyclerView = findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         HistoricPriceAdapter adapter = new HistoricPriceAdapter(viewModel, this);
+        ItemSeparatorDecoration decoration = new ItemSeparatorDecoration(this);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(decoration);
     }
 
     private void bindView() {

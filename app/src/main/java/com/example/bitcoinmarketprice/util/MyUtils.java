@@ -51,7 +51,7 @@ public class MyUtils {
 
     // Converting double format string to int format string
     public static String getWholePrice(String itemPrice) {
-        double price = Double.parseDouble(itemPrice);
+        double price = Double.parseDouble(itemPrice.replace(",",""));
         NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMaximumFractionDigits(0);
         return numberFormat.format(price);
