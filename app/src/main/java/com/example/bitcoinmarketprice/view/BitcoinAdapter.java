@@ -1,5 +1,8 @@
 package com.example.bitcoinmarketprice.view;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +23,7 @@ import java.util.List;
 public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinCardViewHolder> {
 
     private final static int CURRENCY_COUNT = 3;
-    private List<BitcoinCardModel> dataList = new ArrayList<>();
+    private final List<BitcoinCardModel> dataList = new ArrayList<>();
 
     public BitcoinAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
         viewModel.getLatestPrice().observe(lifecycleOwner, updatedData -> {
@@ -30,10 +33,14 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
                 String[] currencyName = {"US Dollar", "Pound", "Euro"};
                 String[] currentRate = {updatedData.get(0).getUsdRate(), updatedData.get(0).getGbpRate(), updatedData.get(0).getEurRate()};
                 String[] previousRate = null;
-                if (dataList.size() > 1) {
-                    previousRate = new String[]{updatedData.get(0).getUsdRate(), updatedData.get(0).getGbpRate(), updatedData.get(0).getEurRate()};
+                int[] currencySymbol = {R.drawable.usd_symbol, R.drawable.gbp_symbol, R.drawable.eur_symbol};
+
+                if (updatedData.size() > 1) {
+                    previousRate = new String[]{updatedData.get(1).getUsdRate(), updatedData.get(1).getGbpRate(), updatedData.get(1).getEurRate()};
+                    Log.e(TAG, "BitcoinAdapter: " + updatedData.size());
                 }
-                int[] currencySymbol = {R.drawable.currency_symbol_usd, R.drawable.currency_symbol_gbp, R.drawable.currency_symbol_eur};
+
+                Log.e(TAG, "BitcoinAdapter: " + updatedData.size());
 
                 for (int i = 0; i < CURRENCY_COUNT; i++) {
                     if (previousRate != null) {
@@ -42,14 +49,17 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
                                 currentRate[i],
                                 updatedData.get(0).getRequestTime(),
                                 MyUtils.getPercentageChange(currentRate[i], previousRate[i])));
+                        Log.e(TAG, "BitcoinAdapter: not null");
                     } else {
                         dataList.add(new BitcoinCardModel(currencySymbol[i],
                                 currencyName[i],
                                 currentRate[i],
                                 updatedData.get(0).getRequestTime(),
-                                MyUtils.getPercentageChange(currentRate[i], "")));
+                                MyUtils.getPercentageChange(currentRate[i], null)));
+                        Log.e(TAG, "BitcoinAdapter: null");
                     }
                 }
+                notifyDataSetChanged();
             }
         });
     }
@@ -78,10 +88,11 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
         return dataList == null ? 0 : dataList.size();
     }
 
-    public static class BitcoinCardViewHolder extends RecyclerView.ViewHolder{
+    public static class BitcoinCardViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView ivCurrency;
         private final TextView tvCurrencyName, tvCurrentRate, tvUpdateTime, tvPercentChange;
+
         public BitcoinCardViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -133,40 +144,20 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
             return ivCurrency;
         }
 
-        public void setIvCurrency(int ivCurrency) {
-            this.ivCurrency = ivCurrency;
-        }
-
         public String getTvCurrencyName() {
             return tvCurrencyName;
-        }
-
-        public void setTvCurrencyName(String tvCurrencyName) {
-            this.tvCurrencyName = tvCurrencyName;
         }
 
         public String getTvCurrentRate() {
             return tvCurrentRate;
         }
 
-        public void setTvCurrentRate(String tvCurrentRate) {
-            this.tvCurrentRate = tvCurrentRate;
-        }
-
         public String getTvUpdateTime() {
             return tvUpdateTime;
         }
 
-        public void setTvUpdateTime(String tvUpdateTime) {
-            this.tvUpdateTime = tvUpdateTime;
-        }
-
         public String getTvPercentChange() {
             return tvPercentChange;
-        }
-
-        public void setTvPercentChange(String tvPercentChange) {
-            this.tvPercentChange = tvPercentChange;
         }
     }
 }

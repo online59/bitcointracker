@@ -5,25 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".view.Bitcoin">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            tools:listitem="@layout/card_bitcoin_value" />
-
-        <TextView
-            android:id="@+id/btn_add_currency"
-            style="@style/TextViewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_new_currency" />
-
-    </LinearLayout>
+        android:padding="16dp"
+        tools:listitem="@layout/card_bitcoin_value" />
 
 </FrameLayout>

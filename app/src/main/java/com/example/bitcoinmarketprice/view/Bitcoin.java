@@ -49,6 +49,5 @@ public class Bitcoin extends Fragment {
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new ItemSeparatorDecoration(getContext()));
     }
 }

@@ -1,18 +1,10 @@
 package com.example.bitcoinmarketprice.util;
 
 import static android.content.ContentValues.TAG;
-import static android.content.Context.ALARM_SERVICE;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.bitcoinmarketprice.api.BroadcastService;
+import androidx.annotation.Nullable;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -22,10 +14,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class MyUtils {
-
-    public static final String MESSAGE = "FragmentMessage";
-    public static final String INTENT_LAST_ITEM_IN_DATABASE = "com.example.bitcoinmarketprice.LastItemInDatabase";
-    public static final String INTENT_PREVIOUS_REQUEST_TIME = "com.example.bitcoinmarketprice.PreviousRequestTime";
 
     // Convert date (from specific format) to new format
     public static String getItemDate(String itemDate) {
@@ -71,19 +59,21 @@ public class MyUtils {
         return numberFormat.format(price);
     }
 
-    public static String getPercentageChange(String currentRate, String previousRate) {
+    public static String getPercentageChange(String currentRate, @Nullable String previousRate) {
         String change = "0.0";
         double currentPrice;
         double previousPrice;
-        if (previousRate  != null) {
+        if (previousRate != null) {
             currentPrice = Double.parseDouble(currentRate.replace(",", ""));
             previousPrice = Double.parseDouble(currentRate.replace(",", ""));
 
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(2);
 
-            change = numberFormat.format(currentPrice/previousPrice);
+            change = numberFormat.format((currentPrice - previousPrice) / previousPrice);
+            Log.e(TAG, "getPercentageChange: " + (currentPrice - previousPrice) / previousPrice);
         }
+        Log.e(TAG, "getPercentageChange: called");
 
         return change + "%";
     }
