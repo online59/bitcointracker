@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,13 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.bitcoinmarketprice.R;
 import com.example.bitcoinmarketprice.api.BroadcastService;
 import com.example.bitcoinmarketprice.vm.MainViewModel;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +42,22 @@ public class MainActivity extends AppCompatActivity {
 
         bindView();
         requestDataPeriodically();
-        setRecyclerView();
+        setupViewPager();
+    }
+
+    private void setupViewPager() {
+        ViewPager2 viewPager2 = findViewById(R.id.view_pager);
+        viewPager2.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager(), getLifecycle()));
+
+        String[] tabName = {"Bitcoin", "Historic"};
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+
+                tab.setText(tabName[position]);
+            }
+        }).attach();
     }
 
     @Override
@@ -57,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int menuItemId = item.getItemId();
         if (menuItemId == R.id.menu_calculator) {
-            Intent intent = new Intent(this, Calculator.class);
+            Intent intent = new Intent(this, Bitcoin.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -79,18 +93,6 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), UPDATE_INTERVAL, pendingIntent);
     }
 
-    private void setRecyclerView() {
-
-        RecyclerView recyclerView = findViewById(R.id.my_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        HistoricPriceAdapter adapter = new HistoricPriceAdapter(viewModel, this);
-        ItemSeparatorDecoration decoration = new ItemSeparatorDecoration(this);
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(decoration);
-    }
-
     private void bindView() {
 
         // Start requesting bitcoin meta data
@@ -102,7 +104,5 @@ public class MainActivity extends AppCompatActivity {
         // Load new data
         viewModel.requestBitcoinData();
 
-        ViewPager2 viewPager2 = findViewById(R.id.view_pager);
-        viewPager2.setAdapter(new PriceCardPagerAdapter(viewModel, this));
     }
 }

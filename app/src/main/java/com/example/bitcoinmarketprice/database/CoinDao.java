@@ -14,8 +14,8 @@ public interface CoinDao {
     @Query("SELECT * FROM bitcoinprice")
     LiveData<List<BitcoinPrice>> getAll();
 
-    @Query("SELECT * FROM bitcoinprice ORDER BY request_time DESC LIMIT 1")
-    LiveData<BitcoinPrice> getLatestItem();
+    @Query("SELECT * FROM bitcoinprice ORDER BY request_time DESC LIMIT 2")
+    LiveData<List<BitcoinPrice>> getLatestItem();
 
     @Insert(entity = BitcoinPrice.class, onConflict = OnConflictStrategy.IGNORE)
     void insertNewPrice(BitcoinPrice bitcoinPrice);

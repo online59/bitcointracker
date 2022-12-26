@@ -8,6 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <color name="orange_500">#E65319</color>
-    <color name="green_500">#19E653</color>
+    <color name="orange_500">#FFE65319</color>
+    <color name="green_500">#FF19E653</color>
+
+
+    <!-- Color for bitcoin historical data -->
+    <color name="dark_green">#FF338F40</color>
+    <color name="dark_red">#FFAD2E2C</color>
 </resources>

@@ -30,10 +30,10 @@ public class PriceCardPagerAdapter extends RecyclerView.Adapter<PriceCardPagerAd
             if (lastUpdateData != null) {
                 pagerDataList.clear();
 
-                String updateTime = lastUpdateData.getRequestTime();
-                String updatePriceUsd = lastUpdateData.getUsdRate();
-                String updatePriceGbp = lastUpdateData.getGbpRate();
-                String updatePriceEur = lastUpdateData.getEurRate();
+                String updateTime = lastUpdateData.get(0).getRequestTime();
+                String updatePriceUsd = lastUpdateData.get(0).getUsdRate();
+                String updatePriceGbp = lastUpdateData.get(0).getGbpRate();
+                String updatePriceEur = lastUpdateData.get(0).getEurRate();
 
                 String[] listItem = {updatePriceUsd, updatePriceGbp, updatePriceEur};
                 int[] currencySymbol = {R.drawable.currency_symbol_usd, R.drawable.currency_symbol_gbp, R.drawable.currency_symbol_eur};

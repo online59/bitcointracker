@@ -31,7 +31,7 @@ public class RoomRepository {
         return coinDao.getAll();
     }
 
-    public LiveData<BitcoinPrice> getLatestPrice() {
+    public LiveData<List<BitcoinPrice>> getLatestPrice() {
         return coinDao.getLatestItem();
     }
 

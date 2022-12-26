@@ -15,7 +15,7 @@
         android:theme="@style/Theme.BitcoinMarketPrice"
         tools:targetApi="31">
         <activity
-            android:name=".view.Calculator"
+            android:name=".view.Bitcoin"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
         <activity
