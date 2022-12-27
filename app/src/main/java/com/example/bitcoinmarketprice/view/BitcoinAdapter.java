@@ -26,8 +26,11 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
     private final List<BitcoinCardModel> dataList = new ArrayList<>();
 
     public BitcoinAdapter(MainViewModel viewModel, LifecycleOwner lifecycleOwner) {
+
         viewModel.getLatestPrice().observe(lifecycleOwner, updatedData -> {
+
             if (updatedData != null && updatedData.size() > 0) {
+
                 dataList.clear(); // Clear old data before add new data
 
                 String[] currencyName = {"US Dollar", "Pound", "Euro"};
@@ -37,27 +40,24 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
 
                 if (updatedData.size() > 1) {
                     previousRate = new String[]{updatedData.get(1).getUsdRate(), updatedData.get(1).getGbpRate(), updatedData.get(1).getEurRate()};
-                    Log.e(TAG, "BitcoinAdapter: " + updatedData.size());
                 }
 
-                Log.e(TAG, "BitcoinAdapter: " + updatedData.size());
-
                 for (int i = 0; i < CURRENCY_COUNT; i++) {
+
+                    BitcoinCardModel bitcoinData = new BitcoinCardModel();
+
+                    bitcoinData.setIvCurrency(currencySymbol[i]);
+                    bitcoinData.setTvCurrencyName(currencyName[i]);
+                    bitcoinData.setTvCurrentRate(currentRate[i]);
+                    bitcoinData.setTvUpdateTime(updatedData.get(0).getRequestTime());
+
                     if (previousRate != null) {
-                        dataList.add(new BitcoinCardModel(currencySymbol[i],
-                                currencyName[i],
-                                currentRate[i],
-                                updatedData.get(0).getRequestTime(),
-                                MyUtils.getPercentageChange(currentRate[i], previousRate[i])));
-                        Log.e(TAG, "BitcoinAdapter: not null");
+                        bitcoinData.setTvPercentChange(MyUtils.getPercentageChange(currentRate[i], previousRate[i]));
                     } else {
-                        dataList.add(new BitcoinCardModel(currencySymbol[i],
-                                currencyName[i],
-                                currentRate[i],
-                                updatedData.get(0).getRequestTime(),
-                                MyUtils.getPercentageChange(currentRate[i], null)));
-                        Log.e(TAG, "BitcoinAdapter: null");
+                        bitcoinData.setTvPercentChange(null);
                     }
+
+                    dataList.add(bitcoinData);
                 }
                 notifyDataSetChanged();
             }
@@ -132,14 +132,6 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
         public BitcoinCardModel() {
         }
 
-        public BitcoinCardModel(int ivCurrency, String tvCurrencyName, String tvCurrentRate, String tvUpdateTime, String tvPercentChange) {
-            this.ivCurrency = ivCurrency;
-            this.tvCurrencyName = tvCurrencyName;
-            this.tvCurrentRate = tvCurrentRate;
-            this.tvUpdateTime = tvUpdateTime;
-            this.tvPercentChange = tvPercentChange;
-        }
-
         public int getIvCurrency() {
             return ivCurrency;
         }
@@ -158,6 +150,26 @@ public class BitcoinAdapter extends RecyclerView.Adapter<BitcoinAdapter.BitcoinC
 
         public String getTvPercentChange() {
             return tvPercentChange;
+        }
+
+        public void setIvCurrency(int ivCurrency) {
+            this.ivCurrency = ivCurrency;
+        }
+
+        public void setTvCurrencyName(String tvCurrencyName) {
+            this.tvCurrencyName = tvCurrencyName;
+        }
+
+        public void setTvCurrentRate(String tvCurrentRate) {
+            this.tvCurrentRate = tvCurrentRate;
+        }
+
+        public void setTvUpdateTime(String tvUpdateTime) {
+            this.tvUpdateTime = tvUpdateTime;
+        }
+
+        public void setTvPercentChange(String tvPercentChange) {
+            this.tvPercentChange = tvPercentChange;
         }
     }
 }

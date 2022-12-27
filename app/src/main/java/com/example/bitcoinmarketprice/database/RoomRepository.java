@@ -36,7 +36,6 @@ public class RoomRepository {
     }
 
     public void insertNewPrice(BitcoinPrice bitcoinPrice) {
-        Log.i(TAG, "insertNewPrice: New data has been added to the database.");
         new InsertItemAsync(coinDao).execute(bitcoinPrice);
     }
 

@@ -60,7 +60,7 @@ public class MyUtils {
     }
 
     public static String getPercentageChange(String currentRate, @Nullable String previousRate) {
-        String change = "0.0";
+        String change = "0";
         double currentPrice;
         double previousPrice;
         if (previousRate != null) {
@@ -70,11 +70,9 @@ public class MyUtils {
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(2);
 
-            change = numberFormat.format((currentPrice - previousPrice) / previousPrice);
-            Log.e(TAG, "getPercentageChange: " + (currentPrice - previousPrice) / previousPrice);
+            change = numberFormat.format(((currentPrice - previousPrice) / previousPrice) * 100);
+            Log.e(TAG, "getPercentageChange: " + ((currentPrice - previousPrice) / previousPrice) * 100);
         }
-        Log.e(TAG, "getPercentageChange: called");
-
         return change + "%";
     }
 
